@@ -29,55 +29,58 @@ public class Server {
 	private boolean serverStarted = false;
 	private static List<User> userList; // 소켓 킨 유저들 목록
 	private Thread serverThread;
-	private boolean gameStart;
-	User userdata;
-	ObjectInputStream ois;
-	ObjectOutputStream oos;
+//	private boolean gameStart;
+	
+//	ObjectInputStream ois;
+//	ObjectOutputStream oos;
 	boolean exit = false;
 	String userip = "";
 	private Map<Integer, Thread> threadList; 
 	private static List<ClientHandler> clientList;
-	Queue<Game> que;
+	static Queue<Game> que;
 //	private static final int THREAD_CNT = 8; //최대 스레드 개수 
 	private static ExecutorService threadPool; //스레드풀 
-	private ServerSocket serverSocket;
+	private static ServerSocket serverSocket;
 	
 
 	public Server(int port) {
 		this.port = port;
 		userList = new ArrayList<User>();
-		clientList = new Vector<Server.ClientHandler>();
-		
-		gameStart = false;
-		userdata = null;
-		ois = null;
-		oos = null;
-		que = null;
+//		clientList = new Vector<Server.ClientHandler>();
+//		
+//		gameStart = false;
+//		ois = null;
+//		oos = null;
+//		que = null;
 
 		
 	}
+	
+	public static void init() {
+		threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		userList = new ArrayList<User>();
+		clientList = new Vector<Server.ClientHandler>();	
+		que = null;
+	}
 
-	public void Start() {
+	public static void Start(int port) {
 //		if(clientList.size()==8) serverStarted = true; // 방에 8명 있으면 서버 시작 안함 
 		
-		if (serverStarted) {
-			System.out.println("Server has already started!");
-			return;
-		}
-		threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//		if (serverStarted) {
+//			System.out.println("Server has already started!");
+//			return;
+//		}
+		init();
 		System.out.println("Thread Size : "+Thread.getAllStackTraces().size());
-				
+		clientList = new Vector<Server.ClientHandler>();
 		try {
-			serverSocket = new ServerSocket(this.port);
+			serverSocket = new ServerSocket(port);
 			
 		
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			stopServer();
+			return;
 		}
-		
-		
-		
 		
 		Runnable runnable = new Runnable() {
 			
@@ -88,11 +91,11 @@ public class Server {
 					try {
 						Socket socket = serverSocket.accept();// Client 수락
 						String userip = socket.getInetAddress().toString().replace("/", "");
-						 System.out.println(socket.getInetAddress() + "가 접속했습니다 : "+Thread.currentThread().getName());
+						System.out.println(socket.getInetAddress() + "가 접속했습니다 : "+Thread.currentThread().getName());
 						ClientHandler clientHandler = new ClientHandler(userip, socket);
 						clientList.add(clientHandler);
 						System.out.println("Client 개수 "+clientList.size());
-						threadPool.submit(clientHandler);
+						threadPool.execute(clientHandler);
 						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -108,7 +111,7 @@ public class Server {
 	
 	}//Start() end 
 
-	public void stopServer() { // 서버 종료 시 호출
+	public static void stopServer() { // 서버 종료 시 호출
 		try {
 			// 모든 소켓 닫기
 			Iterator<ClientHandler> iterator = clientList.iterator();
@@ -130,12 +133,13 @@ public class Server {
 	}//stopServer() end
 	
 	
-	public class ClientHandler implements Runnable {
+	public static class ClientHandler implements Runnable {
 		String userName;
         Socket socket;
         String ip;
         ObjectOutputStream oos;
         ObjectInputStream ois;
+        User userdata;
         boolean exit = false;
 		
         public ClientHandler(String ip, Socket socket) {

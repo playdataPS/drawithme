@@ -62,8 +62,8 @@ public class MainServer {
 //		sv.user = new ArrayList<User>();
 //		sv.service();
 		int port = 5555;
-		Server sever = new Server(port);
-		sever.Start();
+//		Server sever = new Server(port);
+		Server.Start(port);
 		
 	}
 }

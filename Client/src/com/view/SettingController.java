@@ -3,7 +3,6 @@ package com.view;
 import com.main.MainApp;
 import com.vo.Room;
 import com.vo.User;
-import com.vo.User2;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -61,7 +60,7 @@ public class SettingController {
 	private void createRoom() {
 		String roomName = roomTitleInput.getText();
 		int maxNum = Integer.parseInt(maxLimit.getText());
-		Room room = new Room(roomName, maxNum);
+//		Room room = new Room(roomName, maxNum);
 //		mainApp.initWaitingRoom(user, room);
 		settingStage.hide();
 //		RoomListController roomlist = new RoomListController();

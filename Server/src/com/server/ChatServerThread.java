@@ -7,9 +7,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import com.vo.Message;
-import com.vo.MessageType;
 import com.vo.User;
 
 public class ChatServerThread implements Runnable {
@@ -43,7 +40,7 @@ public class ChatServerThread implements Runnable {
 			System.out.println("chat start");
 			try {
 				chatuser = (User) ois.readObject();
-				System.out.println(chatuser.getType());
+//				System.out.println(chatuser.getType());
 //				MessageType messType = chatuser.getType();
 //				switch (messType) {
 //				case CONNECTED:
@@ -60,7 +57,7 @@ public class ChatServerThread implements Runnable {
 //					System.out.println("chat user");
 //					break;
 //				}
-				message = chatuser.getMessage();
+//				message = chatuser.getMessage();
 				System.out.println(message);
 				Chatting();
 			} catch (ClassNotFoundException e) {
@@ -73,12 +70,12 @@ public class ChatServerThread implements Runnable {
 	}
 
 	public void Chatting() {
-		for(User user : userList) {
-			try {
-				user.getOos().writeObject(message);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+//		for(User user : userList) {
+//			try {
+//				user.getOos().writeObject(message);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 }

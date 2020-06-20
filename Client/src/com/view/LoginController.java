@@ -3,7 +3,6 @@ package com.view;
 
 import com.client.ClientListener;
 import com.main.MainApp;
-import com.vo.Room;
 import com.vo.User;
 
 import javafx.event.ActionEvent;
@@ -74,8 +73,7 @@ public class LoginController {
 			playerName = nickname;
 			ClientListener.getInstance().createConnect("127.0.0.1", 5555, nickname, MainApp.getInstance());
 			ClientListener.getInstance().startHandler();
-//			Room room = new Room("�뱾�뼱�삤�꽭�슂", 8);
-//			MainApp.getInstance().initWaitingRoom(room);
+
 
 			MainApp.switchToLobby();
 

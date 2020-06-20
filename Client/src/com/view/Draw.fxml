@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Region?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.view.DrawController">
+	<children>
+		<ProgressBar fx:id="bar" layoutX="260.0" layoutY="89.0" prefWidth="710.0" progress="0.63" />
+		<Region layoutX="191.0" layoutY="126.0" prefHeight="369.0" prefWidth="788.0" style="-fx-border-color: lightgray;" />
+		<Label id="user" fx:id="user" alignment="CENTER" contentDisplay="CENTER" layoutX="192.0" layoutY="89.0" prefHeight="23.0" prefWidth="62.0" style="-fx-border-color: gray;" text="사용자" textAlignment="CENTER" textFill="#0d0d0d" textOverrun="CLIP" wrapText="true" />
+		<Button fx:id="out" layoutX="1020.0" layoutY="740.0" mnemonicParsing="false" onAction="#exitbtn" prefHeight="40.0" prefWidth="117.0" text="나가기" />
+		<Region layoutX="191.0" layoutY="511.0" prefHeight="229.0" prefWidth="788.0" style="-fx-border-color: lightgray;" />
+		<Button fx:id="send" layoutX="918.0" layoutY="701.0" mnemonicParsing="false" onAction="#submitBtn" prefHeight="40.0" prefWidth="62.0" text="전송" />
+		<TextField fx:id="inputchat" layoutX="192.0" layoutY="709.0" prefHeight="30.0" prefWidth="725.0" />
+		<TextArea fx:id="chat" layoutX="191.0" layoutY="511.0" prefHeight="190.0" prefWidth="788.0" />
+
+      <Label fx:id="word_num2" alignment="CENTER" layoutX="505.0" layoutY="30.0" prefHeight="40.0" prefWidth="40.0" style="-fx-border-color: lightgray;" />
+      <Label fx:id="word_num3" alignment="CENTER" layoutX="560.0" layoutY="30.0" prefHeight="40.0" prefWidth="40.0" style="-fx-border-color: lightgray;" />
+      <Label fx:id="word_num4" alignment="CENTER" layoutX="615.0" layoutY="30.0" prefHeight="40.0" prefWidth="40.0" style="-fx-border-color: lightgray;" />
+		<Label fx:id="user1" layoutX="1039.0" layoutY="165.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" />
+            <Label fx:id="user2" layoutX="1039.0" layoutY="183.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" />
+            <Label fx:id="user3" layoutX="1039.0" layoutY="201.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" />
+            <Label fx:id="user4" layoutX="1039.0" layoutY="219.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" />
+            <Label fx:id="user5" layoutX="1039.0" layoutY="237.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" />
+            <Label fx:id="user6" layoutX="1039.0" layoutY="255.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" />
+            <Label fx:id="user7" layoutX="1039.0" layoutY="273.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" />
+            <Label fx:id="user8" layoutX="1039.0" layoutY="291.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" />
+            <Label fx:id="user11" alignment="CENTER" contentDisplay="CENTER" layoutX="1039.0" layoutY="147.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" text="접속자" />
+		<Canvas fx:id="canvas" height="368.0" layoutX="191.0" layoutY="126.0" onMouseDragged="#onMouseDraggedListener" onMousePressed="#onMousePressedListener" width="788.0" />
+      
+	</children>
+
+</AnchorPane>

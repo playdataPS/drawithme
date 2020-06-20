@@ -1,0 +1,5 @@
+package com.vo;
+
+public enum Status {
+	DISCONNECTED, CONNECTED, INCORRECT, PLAYING, READY, WAITING, CHAT, ROBY;
+}

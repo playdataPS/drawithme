@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="370.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.view.SettingController">
+   <children>
+      <VBox prefHeight="400.0" prefWidth="370.0">
+         <children>
+            <Pane prefHeight="50.0" prefWidth="200.0" />
+            <HBox prefHeight="80.0" prefWidth="200.0">
+               <children>
+                  <Pane prefHeight="100.0" prefWidth="80.0" />
+                  <Label text="방 제목 입력" textAlignment="CENTER" wrapText="true">
+                     <padding>
+                        <Insets top="30.0" />
+                     </padding>
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox prefHeight="50.0" prefWidth="200.0">
+               <children>
+                  <Pane prefWidth="80.0" />
+                  <TextField fx:id="roomTitleInput" prefWidth="250.0" promptText="내용을 입력해주세요" />
+               </children>
+            </HBox>
+            <Label text="최대 20자 입력 가능">
+               <padding>
+                  <Insets left="200.0" />
+               </padding>
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Pane prefHeight="100.0" prefWidth="80.0" />
+                  <Label text="입장인원 제한 수" textAlignment="CENTER" wrapText="true">
+                     <padding>
+                        <Insets top="30.0" />
+                     </padding>
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox prefHeight="80.0" prefWidth="100.0">
+               <children>
+                  <Pane prefHeight="100.0" prefWidth="90.0" />
+                  <Button fx:id="setting_minusButton" mnemonicParsing="false" onAction="#minusClicked" text="-">
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin></Button>
+                  <Label fx:id="maxLimit" text="2">
+                     <padding>
+                        <Insets left="30.0" right="30.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Button fx:id="setting_plusButton" mnemonicParsing="false" onAction="#plusClicked" text="+">
+                     <HBox.margin>
+                        <Insets left="30.0" />
+                     </HBox.margin></Button>
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Pane prefHeight="200.0" prefWidth="90.0" />
+                  <Button fx:id="setting_makeButton" mnemonicParsing="false" onAction="#createRoom" prefHeight="40.0" prefWidth="100.0" text="방 만들기">
+                     <HBox.margin>
+                        <Insets right="40.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="setting_cancelButton" mnemonicParsing="false" onAction="#cancelClicked" prefHeight="40.0" prefWidth="60.0" text="취소" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

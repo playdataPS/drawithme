@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,13 +28,11 @@ public class Server {
 	private int port;
 	private boolean serverStarted = false;
 	private static List<User> userList; // 소켓 킨 유저들 목록
-	private ServerHandler serverHandler;
 	private Thread serverThread;
 	private boolean gameStart;
 	User userdata;
 	ObjectInputStream ois;
 	ObjectOutputStream oos;
-	Socket socket;
 	boolean exit = false;
 	String userip = "";
 	private Map<Integer, Thread> threadList; 
@@ -47,12 +46,13 @@ public class Server {
 	public Server(int port) {
 		this.port = port;
 		userList = new ArrayList<User>();
+		clientList = new Vector<Server.ClientHandler>();
+		
 		gameStart = false;
 		userdata = null;
 		ois = null;
 		oos = null;
 		que = null;
-		
 
 		
 	}
@@ -65,26 +65,11 @@ public class Server {
 			return;
 		}
 		threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-		
+		System.out.println("Thread Size : "+Thread.getAllStackTraces().size());
 				
 		try {
 			serverSocket = new ServerSocket(this.port);
-		
-		while (true) {
 			
-			try {
-				Socket socket = serverSocket.accept();
-				serverHandler = new ServerHandler(socket);
-				threadPool.execute(serverHandler); //서버 시작 
-			} catch (IOException e) {
-				e.printStackTrace();
-				break;
-
-			}//클라이언트 요청 받아들임 
-			
-			
-		}//while end
-		
 		
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -92,75 +77,58 @@ public class Server {
 		}
 		
 		
+		
+		
+		Runnable runnable = new Runnable() {
+			
+			@Override
+			public void run() {
+				System.out.println("Server Start!!");
+				while(true) {
+					try {
+						Socket socket = serverSocket.accept();// Client 수락
+						String userip = socket.getInetAddress().toString().replace("/", "");
+						 System.out.println(socket.getInetAddress() + "가 접속했습니다 : "+Thread.currentThread().getName());
+						ClientHandler clientHandler = new ClientHandler(userip, socket);
+						clientList.add(clientHandler);
+						System.out.println("Client 개수 "+clientList.size());
+						threadPool.submit(clientHandler);
+						
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						if(!serverSocket.isClosed())	stopServer();
+						break;
+					}//try~catch end 
+				}//while end
+			}
+		}; //runnable
+//		
+		threadPool.execute(runnable);
+	
 	}//Start() end 
 
-	public class ServerHandler implements Runnable {
-		
-		private Socket socket;
-		private ClientHandler clientHandler;
-		int port;
-
-		ServerHandler(Socket socket) {
-			this.socket = socket;
-		}
-
-		@Override
-		public void run() {
-			try {
-				System.out.println("server start");
-				
-
-				while (true) {
-					try {
-//						Socket socket = serversocket.accept();
-						String userip = socket.getInetAddress().toString().replace("/", "");
-						System.out.println(socket.getInetAddress() + "가 접속했습니다 : "+Thread.currentThread().getName());
-						
-						//userList = new ArrayList<User>();
-						
-						clientHandler = new ClientHandler(userip, socket);
-//						clientList.add(clientHandler);
-//						Thread clientThread = new Thread(clientHandler);
-						//threadList.put(socket.getPort(), clientThread);						
-//						clientThread.start();
-//						threadPool.submit(clientHandler);
-					} catch (Exception e) {
-//						if(!serversocket.isClosed())	stopServer();
-						e.printStackTrace();
-						break;// 끝 
-					}//try~catch end 
-					
-				}//while end
-				threadPool.submit(clientHandler);
-			} catch (Exception e) {
-//				if(!serversocket.isClosed())	stopServer();
-				return;// 끝 
-			}//try~catch end 
-
-		}// run() end
-		
-		public void stopServer() { // 서버 종료 시 호출
-			try {
-				// 모든 소켓 닫기
-				Iterator<ClientHandler> iterator = clientList.iterator();
-				while(iterator.hasNext()) {
-					ClientHandler client = iterator.next();
-					client.socket.close();
-					iterator.remove();
-				}
-				// 서버 소켓 닫기
-				if(serverSocket!=null && !serverSocket.isClosed()) { 
-					serverSocket.close(); 
-				}
-				// 스레드풀 종료
-				if(threadPool!=null && !threadPool.isShutdown()) { 
-					threadPool.shutdown(); 
-				}
-				System.out.println("[서버 멈춤]");
-			} catch (Exception e) { }
-		}//stopServer() end
-
-	}// ServerHandler end
+	public void stopServer() { // 서버 종료 시 호출
+		try {
+			// 모든 소켓 닫기
+			Iterator<ClientHandler> iterator = clientList.iterator();
+			while(iterator.hasNext()) {
+				ClientHandler client = iterator.next();
+				client.socket.close();
+				iterator.remove();
+			}
+			// 서버 소켓 닫기
+			if(serverSocket!=null && !serverSocket.isClosed()) { 
+				serverSocket.close(); 
+			}
+			// 스레드풀 종료
+			if(threadPool!=null && !threadPool.isShutdown()) { 
+				threadPool.shutdown(); 
+			}
+			System.out.println("[서버 멈춤]");
+		} catch (Exception e) { }
+	}//stopServer() end
+	
 	
 	public class ClientHandler implements Runnable {
 		String userName;
@@ -176,7 +144,7 @@ public class Server {
 			try {
 				ois = new ObjectInputStream(socket.getInputStream());
                 oos = new ObjectOutputStream(socket.getOutputStream());
-                System.out.println(" client socket ok ");
+               
             } catch (IOException e) {
                 // TODO Auto-generated catch block
 //                e.printStackTrace();
@@ -186,7 +154,9 @@ public class Server {
 		
 		@Override
 		public void run() {
+			
 			while (!exit) {
+				
 				try {
 					
 					userdata = (User) ois.readObject();
@@ -359,25 +329,18 @@ public class Server {
 
 					}
 
-				} catch (ClassNotFoundException e) {
-					try {
+				} catch (Exception e) {
+					try {				
+						exit = true;
+						e.printStackTrace();
+						clientList.remove(ClientHandler.this);
 						socket.close();
-					} catch (IOException e1) {
+					} catch (IOException e2) {
 						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						e2.printStackTrace();
 					}
-					exit = true;
-					e.printStackTrace();
-				} catch (IOException e) {
-					try {
-						socket.close();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					exit = true;
-					e.printStackTrace();
-				}
+				} //try~catch end 
+				
 			}//while end 
 			
 		}//run() end
@@ -438,6 +401,9 @@ public class Server {
 		
 		public void broadCasting(User userdata) {// 전체 데이터를 보내줌
 			System.out.println("broad + " + userList.size());
+			
+			
+			
 			// 전체 채팅 회원에게 내용 출력
 			for (User data : userList) {
 				try {

@@ -104,12 +104,12 @@ public class ClientListener implements Runnable {
 			String userNickname;
 			while (!flag) {
 				
-				synchronized (ois) {
+				
 					user = (User) ois.readObject();
 					
 					status = user.getStatus();
 					userNickname = user.getNickname();
-				}
+				
 				
 
 				switch (status) {

@@ -1,6 +1,7 @@
 package com.biz;
 
-import static common.JDBCTemplate.*;
+import static common.JDBCTemplate.Close;
+import static common.JDBCTemplate.getConnection;
 
 import java.sql.Connection;
 
@@ -8,100 +9,122 @@ import com.dao.UserDao;
 import com.vo.User;
 
 public class UserBiz {
-	public static String getNickname(String ip) {
-		Connection conn = getConnection();
-		System.out.println("연결");
-		String ret = new UserDao(conn).getNickname(ip);
-		Close(conn);
-		System.out.println("연결끝");
-		return ret;
-	}
-
-	//
-
-	// 닉네임, ip 모두 입력받아서 일치하는지 확인
-	public static boolean getNickIp(User udata) {
-		Connection conn = getConnection();
-		User ret = new UserDao(conn).getNickIP(udata.getIp());
-		if (ret.getNickname() == udata.getNickname()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-
 	
-	public User getLoginUser(User user) {
-		User loginUser = null;
-		String ip = user.getIp();
-		String nickname = user.getNickname();
-		System.out.println("getLoginUser"+ip+" "+nickname);
+	public int ConfirmUserIP(String IP) {
 		Connection conn = getConnection();
-		int count = new UserDao(conn).getIP(ip);
-		System.out.println("count : "+count);
-		if (count > 0) {
-			// 2. 있으면 닉네임 가져오기
-			String nick = new UserDao(conn).getNickname(ip);
-			System.out.println(nick);
-			if (nick.equals(nickname)) {
-				System.out.println("같다");
-				// room list
-				// 3. 있는데 닉네임 같으면 방리스트로
-				 loginUser = new UserDao(conn).getNickIP(ip);
-			} else {
-				System.out.println("달라");
-				// nickname
-				// 4. 있는데 닉네임 다르면 다시로그인
-				
-			}
-		} else {
-			System.out.println("없을때");
-			int cnt = new UserDao(conn).Insert_AllInfo(ip, nickname);
-			System.out.println(cnt);
-			// 5. 없으면 insert
-			loginUser = new UserDao(conn).getNickIP(ip);
-		}
-		return loginUser;
 		
+		int confirm = new UserDao(conn).getIP(IP);
+		
+		Close(conn);
+		
+		return confirm;
 	}
-public static void CheckUser(String ip, String nickname) {
-		// 1. ip 臾 泥댄
-		System.out.println("ㅽ");
+	
+	public String ConfirmUserNickname(String IP) {
 		Connection conn = getConnection();
-		int count = new UserDao(conn).getIP(ip);
-		if (count > 0) {
-			// 2. 쇰㈃ ㅼ 媛�몄ㅺ린
-			String nick = new UserDao(conn).getNickname(ip);
-			System.out.println(nick);
-			if (nick.equals(nickname)) {
-				System.out.println("媛");
-				// room list
-				// 3.  ㅼ 媛쇰㈃ 諛⑸━ㅽ몃
-			} else {
-				System.out.println("щ");
-				// nickname
-				// 4.  ㅼ ㅻⅤ硫 ㅼ濡洹몄
-			}
-		} else {
-			System.out.println("");
-			int cnt = new UserDao(conn).Insert_AllInfo(ip, nickname);
-			System.out.println(cnt);
-			// 5. 쇰㈃ insert
-		}
-
+		
+		String nickname = new UserDao(conn).getNickname(IP);
+		
+		Close(conn);
+		
+		return nickname;
 	}
+	
+	public int getInsertAll(User user) {
+		Connection conn = getConnection();
+		
+		int res = new UserDao(conn).getInsertAll(user);
+		
+		Close(conn);
+		
+		return res;
+	}
+	
+//	public static void CheckUser(String ip, String nickname) {
+//		Connection conn = getConnection();
+//		System.out.println("DB CONNECTION");
+//		
+//		// 입력한 IP가 DB에 존재하는지 확인
+//		int count = new UserDao(conn).getIP(ip);
+//		
+//		if (count > 0) {	// 존재한다면
+//			String nick = new UserDao(conn).getNickname(ip);
+//			System.out.println(nick);
+//			if (nick.equals(nickname)) {
+//				System.out.println("揶쎛�혢");
+//				// room list
+//			} else {
+//				System.out.println("혢�됀�");
+//				// nickname
+//			}
+//		} else {			// 존재하지 않는다면
+//			System.out.println("혰혛혶혙혮혣");
+//			int cnt = new UserDao(conn).Insert_AllInfo(ip, nickname);
+//			System.out.println(cnt);
+//		}
+//		
+//	}
+//	
+//	
+//	public static String getNickname(String ip) {
+//		Connection conn = getConnection();
+//		System.out.println("DB CONNECTION");
+//		String nickname = new UserDao(conn).getNickname(ip);
+//		Close(conn);
+//		System.out.println("DB CLOSE");
+//		return nickname;
+//	}
 
 
-	public static void main(String[] args) {
-		String nickname = "쇰";
-//		String nickname = "eunhye";
+//	public static boolean getNickIp(User udata) {
+//		Connection conn = getConnection();
+//		User ret = new UserDao(conn).getNickIP(udata.getIp());
+//		if (ret.getNickname() == udata.getNickname()) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
+
+//	public User getLoginUser(User user) {
+//		User loginUser = null;
+//		String ip = user.getIp();
+//		String nickname = user.getNickname();
+//		System.out.println("getLoginUser" + ip + " " + nickname);
+//		Connection conn = getConnection();
+//		int count = new UserDao(conn).getIP(ip);
+//		System.out.println("count : " + count);
+//		if (count > 0) {
+//			String nick = new UserDao(conn).getNickname(ip);
+//			System.out.println(nick);
+//			if (nick.equals(nickname)) {
+//				System.out.println("媛숇떎");
+//				// room list
+//				loginUser = new UserDao(conn).getNickIP(ip);
+//			} else {
+//				System.out.println("�떖�씪");
+//				// nickname
+//
+//			}
+//		} else {
+//			System.out.println("�뾾�쓣�븣");
+//			int cnt = new UserDao(conn).Insert_AllInfo(ip, nickname);
+//			System.out.println(cnt);
+//			loginUser = new UserDao(conn).getNickIP(ip);
+//		}
+//		return loginUser;
+//
+//	}
+
+//
+//	public static void main(String[] args) {
+//		String nickname = "혵�눖혙";
+////		String nickname = "eunhye";
+////		String ip = "192.168.0.249";
 //		String ip = "192.168.0.249";
-		String ip = "192.168.0.249";
-//		String ip = "192.168.0.5";
-		CheckUser(ip, nickname);
-	}
+////		String ip = "192.168.0.5";
+//		CheckUser(ip, nickname);
+//	}
 
-	// ip 없으면 지금 입력한 닉네임, ip 입력
 
 }

@@ -41,7 +41,7 @@ public class Server {
 	Queue<Game> que;
 //	private static final int THREAD_CNT = 8; //최대 스레드 개수 
 	private static ExecutorService threadPool; //스레드풀 
-	private static ServerSocket serverSocket;
+	private ServerSocket serverSocket;
 	
 
 	public Server(int port) {
@@ -52,29 +52,29 @@ public class Server {
 		ois = null;
 		oos = null;
 		que = null;
-		threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		
 
 		
 	}
 
 	public void Start() {
-//		if(clientList.size()==8) serverStarted = true; // 방에 8명 있으면 서버 시작 안함  
+//		if(clientList.size()==8) serverStarted = true; // 방에 8명 있으면 서버 시작 안함 
 		
 		if (serverStarted) {
 			System.out.println("Server has already started!");
 			return;
 		}
+		threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		
 				
 		try {
 			serverSocket = new ServerSocket(this.port);
 		
 		while (true) {
 			
-			Socket socket;
 			try {
-				socket = serverSocket.accept();
+				Socket socket = serverSocket.accept();
 				serverHandler = new ServerHandler(socket);
-
 				threadPool.execute(serverHandler); //서버 시작 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -84,6 +84,7 @@ public class Server {
 			
 			
 		}//while end
+		
 		
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -96,6 +97,7 @@ public class Server {
 	public class ServerHandler implements Runnable {
 		
 		private Socket socket;
+		private ClientHandler clientHandler;
 		int port;
 
 		ServerHandler(Socket socket) {
@@ -116,9 +118,9 @@ public class Server {
 						
 						//userList = new ArrayList<User>();
 						
-						ClientHandler clientHandler = new ClientHandler(userip, socket);
+						clientHandler = new ClientHandler(userip, socket);
 //						clientList.add(clientHandler);
-						Thread clientThread = new Thread(clientHandler);
+//						Thread clientThread = new Thread(clientHandler);
 						//threadList.put(socket.getPort(), clientThread);						
 //						clientThread.start();
 //						threadPool.submit(clientHandler);
@@ -129,7 +131,7 @@ public class Server {
 					}//try~catch end 
 					
 				}//while end
-
+				threadPool.submit(clientHandler);
 			} catch (Exception e) {
 //				if(!serversocket.isClosed())	stopServer();
 				return;// 끝 

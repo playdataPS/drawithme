@@ -9,7 +9,6 @@ import com.view.DrawController;
 import com.view.LoginController;
 import com.view.SettingController;
 import com.view.WaitingRoomController;
-import com.vo.GameUser;
 import com.vo.Room;
 import com.vo.Status;
 import com.vo.User;

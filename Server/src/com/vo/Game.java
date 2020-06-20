@@ -1,109 +1,121 @@
 package com.vo;
 
-import java.io.Serializable;
-import java.sql.Date;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import javafx.scene.paint.Color;
 
-
-public class Game implements Serializable{
-
-	private int no;
-	private int dictNo;
-	private String word;
-	private String img;
-	private Date regdate;
-	private Color color;
-	private Point point;
-	private User seeker;
-	private List<User> drowingUserQue;
-	
+public class Game {
+	String word; // 제시어
+	Color color; // Colorpicker.getValue() 로 리턴받는 값
+	double lineW; // Slider.getValue()로 리턴받음
+	String challenger; // 맞추는 사람. 턴 표시
+	String drawer; // 그림 그리는 사람. 턴 표시
+	List<String> gameUserList; // 유저리스트
+	double startX;
+	double startY;
+	double oldX;
+	double oldY;
+	double lastX;
+	double lastY;
 	public Game() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
-	
+public Game(String word, List<String> gameUserList) {
+	super();
+	this.word = word;
+	this.gameUserList = gameUserList;
+}
+	public Game(String word, String challenger, String drawer, List<String> gameUserList) {
+		super();
+		this.word = word;
+		this.challenger = challenger;
+		this.drawer = drawer;
+		this.gameUserList = gameUserList;
+	}
+	public Game(Color color, double lineW, double startX, double startY) {
+		super();
+		this.color = color;
+		this.lineW = lineW;
+		this.startX = startX;
+		this.startY = startY;
+	}
+	public Game(double oldX, double oldY, double lastX, double lastY) {
+		super();
+		this.oldX = oldX;
+		this.oldY = oldY;
+		this.lastX = lastX;
+		this.lastY = lastY;
+	}
 	public String getWord() {
 		return word;
 	}
 	public void setWord(String word) {
 		this.word = word;
 	}
-	
-	public User getSeeker() {
-		return seeker;
-	}
-	public void setSeeker(User seeker) {
-		this.seeker = seeker;
-	}
-	
-	//그림 그릴 유저들만 랜덤으로 순서 부여 
-	public void mixDrowingUser(List<User> userList) {//drowing user
-		drowingUserQue = new LinkedList<User>();
-		Collections.shuffle(userList);		
-		this.drowingUserQue.addAll(userList);
-	}
-	
-	public List<User> getDrowingUserQue() {
-		return drowingUserQue;
-	}
-	
-	public void setDrowingUserQue(List<User> drowingUserQue) {
-		this.drowingUserQue = drowingUserQue;
-	}
-	
-	public Point getPoint() {
-		return point;
-	}
-	
-	public void setPoint(Point point) {
-		this.point = point;
-	}
-	
-	public void setColor(Color color) {
-		this.color = color;
-	}
-	
 	public Color getColor() {
 		return color;
 	}
-
-	public int getNo() {
-		return no;
+	public void setColor(Color color) {
+		this.color = color;
 	}
-
-	public void setNo(int no) {
-		this.no = no;
+	public double getLineW() {
+		return lineW;
 	}
-
-	public int getDictNo() {
-		return dictNo;
+	public void setLineW(double lineW) {
+		this.lineW = lineW;
 	}
-
-	public void setDictNo(int dictNo) {
-		this.dictNo = dictNo;
+	public String getChallenger() {
+		return challenger;
 	}
-
-	public String getImg() {
-		return img;
+	public void setChallenger(String challenger) {
+		this.challenger = challenger;
 	}
-
-	public void setImg(String img) {
-		this.img = img;
+	public String getDrawer() {
+		return drawer;
 	}
-
-	public Date getRegdate() {
-		return regdate;
+	public void setDrawer(String drawer) {
+		this.drawer = drawer;
 	}
-
-	public void setRegdate(Date regdate) {
-		this.regdate = regdate;
+	public List<String> getGameUserList() {
+		return gameUserList;
 	}
-	
-	
-	
-	
+	public void setGameUserList(List<String> gameUserList) {
+		this.gameUserList = gameUserList;
+	}
+	public double getStartX() {
+		return startX;
+	}
+	public void setStartX(double startX) {
+		this.startX = startX;
+	}
+	public double getStartY() {
+		return startY;
+	}
+	public void setStartY(double startY) {
+		this.startY = startY;
+	}
+	public double getOldX() {
+		return oldX;
+	}
+	public void setOldX(double oldX) {
+		this.oldX = oldX;
+	}
+	public double getOldY() {
+		return oldY;
+	}
+	public void setOldY(double oldY) {
+		this.oldY = oldY;
+	}
+	public double getLastX() {
+		return lastX;
+	}
+	public void setLastX(double lastX) {
+		this.lastX = lastX;
+	}
+	public double getLastY() {
+		return lastY;
+	}
+	public void setLastY(double lastY) {
+		this.lastY = lastY;
+	}
 }

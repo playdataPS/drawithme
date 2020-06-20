@@ -1,5 +1,5 @@
 package com.vo;
 
 public enum GameStatus {
-	HIDE, SEEK;
+	CHALLENGER, DRAWER, OTHER, PRESSED, DRAGGED;
 }

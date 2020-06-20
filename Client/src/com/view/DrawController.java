@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.main.MainApp;
-import com.vo.Point;
 
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -68,7 +67,7 @@ public class DrawController implements Initializable{
 	
 	private GraphicsContext gc;
 	
-	Point point;
+	
 	
     double startX, startY, lastX,lastY,oldX,oldY;
     double hg;

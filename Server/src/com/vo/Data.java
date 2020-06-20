@@ -9,27 +9,27 @@ public class Data implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	int userNo;
-	String ip;
-	String nickname;
-	String score;
-	Date regdate;
-	String word;
-	String color; // 특이사항 아래 생성자 참고
-	double lineW;
-	String challenger;
-	String drawer;
-	List<String> gameUserList;
-	double startX;
-	double startY;
-	double oldX;
-	double oldY;
-	double lastX;
-	double lastY;
-	String message; // Data 객체만 같고 있는 것1
-	Status status; // Data 객체만 같고 있는 것2
-	GameStatus gameStatus; // Data 객체만 같고 있는 것3
-	UserStatus userStatus; // Data 객체만 같고 있는 것4
+	private  int userNo;
+	private  String ip;
+	private  String nickname;
+	private  String score;
+	private  Date regdate;
+	private  String word;
+	private  String color; // 특이사항 아래 생성자 참고
+	private  double lineW;
+	private  String challenger;
+	private  String drawer;
+	private  List<String> gameUserList;
+	private  double startX;
+	private  double startY;
+	private  double oldX;
+	private  double oldY;
+	private  double lastX;
+	private  double lastY;
+	private  String message; // Data 객체만 같고 있는 것1
+	private  Status status; // Data 객체만 같고 있는 것2
+	private  GameStatus gameStatus; // Data 객체만 같고 있는 것3
+	private  UserStatus userStatus; // Data 객체만 같고 있는 것4
 	public Data() {
 		super();
 	}

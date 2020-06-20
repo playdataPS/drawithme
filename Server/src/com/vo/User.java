@@ -3,11 +3,11 @@ package com.vo;
 import java.sql.Date;
 
 public class User {
-	int no;
-	String ip;
-	String nickname;
-	String score;
-	Date regdate;
+	private int no;
+	private String ip;
+	private String nickname;
+	private  String score;
+	private  Date regdate;
 	public User() {
 		super();
 	}

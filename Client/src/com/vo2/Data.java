@@ -15,7 +15,7 @@ public class Data implements Serializable {
 	String score;
 	Date regdate;
 	String word;
-	String color; // Æ¯ÀÌ»çÇ× ¾Æ·¡ »ı¼ºÀÚ Âü°í
+	String color; // íŠ¹ì´ì‚¬í•­ ì•„ë˜ ìƒì„±ì ì°¸ê³ 
 	double lineW;
 	String challenger;
 	String drawer;
@@ -26,10 +26,10 @@ public class Data implements Serializable {
 	double oldY;
 	double lastX;
 	double lastY;
-	String message; // Data °´Ã¼¸¸ °°°í ÀÖ´Â °Í1
-	Status status; // Data °´Ã¼¸¸ °°°í ÀÖ´Â °Í2
-	GameStatus gameStatus; // Data °´Ã¼¸¸ °°°í ÀÖ´Â °Í3
-	UserStatus userStatus; // Data °´Ã¼¸¸ °°°í ÀÖ´Â °Í4
+	String message; // Data ê°ì²´ë§Œ ê°™ê³  ìˆëŠ” ê²ƒ1
+	Status status; // Data ê°ì²´ë§Œ ê°™ê³  ìˆëŠ” ê²ƒ2
+	GameStatus gameStatus; // Data ê°ì²´ë§Œ ê°™ê³  ìˆëŠ” ê²ƒ3
+	UserStatus userStatus; // Data ê°ì²´ë§Œ ê°™ê³  ìˆëŠ” ê²ƒ4ï¿½ ï¿½ï¿½4
 	public Data() {
 		super();
 	}
@@ -44,7 +44,7 @@ public class Data implements Serializable {
 	public Data(Game game) {
 		super();
 		this.word = game.getWord();
-		// javafx.scene.paint.Color¸¦ toString()ÇÏ¸é hex web value¸¦ ¹®ÀÚ¿­·Î ¹Ş¾Æ¿Ã ¼ö ÀÖÀ½
+		// javafx.scene.paint.Colorë¥¼ toString()í•˜ë©´ hex web valueë¥¼ ë¬¸ìì—´ë¡œ ë°›ì•„ì˜¬ ìˆ˜ ìˆìŒ
 		this.color = game.getColor().toString(); 
 		this.lineW = game.getLineW();
 		this.challenger = game.getChallenger();

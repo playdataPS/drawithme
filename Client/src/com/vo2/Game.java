@@ -5,12 +5,12 @@ import java.util.List;
 import javafx.scene.paint.Color;
 
 public class Game {
-	String word; // Á¦½Ã¾î
-	Color color; // Colorpicker.getValue() ·Î ¸®ÅÏ¹Ş´Â °ª
-	double lineW; // Slider.getValue()·Î ¸®ÅÏ¹ŞÀ½
-	String challenger; // ¸ÂÃß´Â »ç¶÷. ÅÏ Ç¥½Ã
-	String drawer; // ±×¸² ±×¸®´Â »ç¶÷. ÅÏ Ç¥½Ã
-	List<String> gameUserList; // À¯Àú¸®½ºÆ®
+	String word; // ì œì‹œì–´
+	Color color; // Colorpicker.getValue() ë¡œ ë¦¬í„´ë°›ëŠ” ê°’
+	double lineW; // Slider.getValue()ë¡œ ë¦¬í„´ë°›ìŒ
+	String challenger; // ë§ì¶”ëŠ” ì‚¬ëŒ. í„´ í‘œì‹œ
+	String drawer; // ê·¸ë¦¼ ê·¸ë¦¬ëŠ” ì‚¬ëŒ. í„´ í‘œì‹œ
+	List<String> gameUserList; // ìœ ì €ë¦¬ìŠ¤íŠ¸
 	double startX;
 	double startY;
 	double oldX;

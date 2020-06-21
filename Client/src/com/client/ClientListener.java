@@ -98,8 +98,8 @@ public class ClientListener implements Runnable {
 					// 현재 접속 유저
 					// List<User> nowUserList = user.getUserList();
 					System.out.println("WaitingRoomController - login!! ");
-
 					break;
+
 				case INCORRECT:
 					System.out.println("loginController - try again ");
 					break;
@@ -121,11 +121,9 @@ public class ClientListener implements Runnable {
 						String loginUser = LoginController.getInstance().getPlayerName();
 						System.out.println("[ login nickname : " + loginUser + " , challenger : "
 								+ response.getChallenger() + ", drawer : " + response.getDrawer() + " ] ");
-						
-						//UI update - 공통 
-						
-						
-						
+
+						// UI update - 공통
+
 						if (response.getChallenger().equals(loginUser)) {
 							System.out.println("Challenger" + loginUser);
 
@@ -137,13 +135,10 @@ public class ClientListener implements Runnable {
 							MainApp.switchToGame(game);
 							SideColorPickerController.getInstance().settingTool();
 							DrawController.getInstance().setGameWord(game.getWord());
-							
+
 							DrawController.getInstance().timer();
-							
-							System.out.println(" Turn af : "+DrawController.getInstance().getTurnOver());
-							
-							
-							
+
+							System.out.println(" Turn af : " + DrawController.getInstance().getTurnOver());
 
 						} else {
 							System.out.println("other");
@@ -154,11 +149,14 @@ public class ClientListener implements Runnable {
 					}
 
 					break;
+
+				case LOBBY_CHAT:
+					WaitingRoomController.getInstance().changeMessage(response.getNickname(), response.getMessage());
+					break;
+
 				case GAME_CHAT:
 					break;
 
-				case LOBBY_CHAT:
-					break;
 				case RANKING:
 					break;
 				default:
@@ -204,5 +202,4 @@ public class ClientListener implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
 }

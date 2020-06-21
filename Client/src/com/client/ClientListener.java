@@ -154,7 +154,7 @@ public class ClientListener implements Runnable {
 					}
 
 					break;
-				case GAME_CHAR:
+				case GAME_CHAT:
 					break;
 
 				case LOBBY_CHAT:

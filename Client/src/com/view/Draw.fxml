@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Region?>
+<?import java.util.ArrayList?>
 
 <AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.view.DrawController">
 	<children>
@@ -35,7 +36,23 @@
             <Label fx:id="user8" layoutX="1039.0" layoutY="291.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" />
             <Label fx:id="user11" alignment="CENTER" contentDisplay="CENTER" layoutX="1039.0" layoutY="147.0" prefHeight="17.0" prefWidth="134.0" style="-fx-border-color: black;" text="접속자" />
 		<Canvas fx:id="canvas" height="368.0" layoutX="191.0" layoutY="126.0" onMouseDragged="#onMouseDraggedListener" onMousePressed="#onMousePressedListener" width="788.0" />
-      
+       <fx:define>
+           <ArrayList fx:id="nowPlayerList">
+           	   <fx:reference source="user1" />
+               <fx:reference source="user2" />
+               <fx:reference source="user3" />
+               <fx:reference source="user4" />
+               <fx:reference source="user5" />
+               <fx:reference source="user6" />
+               <fx:reference source="user7" />
+               <fx:reference source="user8" />
+           </ArrayList>
+           <ArrayList fx:id="wordBox">
+           		<fx:reference source="word_num2" />
+            	<fx:reference source="word_num3" />
+            	<fx:reference source="word_num4" />
+           </ArrayList>
+       </fx:define>
 	</children>
 
 </AnchorPane>

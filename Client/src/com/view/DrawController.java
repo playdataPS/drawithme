@@ -1,10 +1,16 @@
 package com.view;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
+import com.client.ClientListener;
 import com.main.MainApp;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -60,10 +66,12 @@ public class DrawController implements Initializable{
 	private Label user11;
 	@FXML
 	private Canvas canvas;
+
 	@FXML
-	private ColorPicker cPick;
+	private ArrayList<Label> nowPlayerList;
+	
 	@FXML
-	private Slider slider;
+	private ArrayList<Label> wordBox;
 	
 	private GraphicsContext gc;
 	
@@ -74,19 +82,29 @@ public class DrawController implements Initializable{
 
 	private MainApp mainApp;
 	
-	private String word="바나나";
+	private String word = "바나나";
 	
 	private Stage drawStage;
 	
 	private static DrawController instance;
 	
+	private String drawer;
 	
 	public static DrawController getInstance() {
 		return instance;
 	}
 	
 	public DrawController() {
+		this.word ="바나나";
 		instance = this;
+	}
+	
+	public String getDrawer() {
+		return drawer;
+	}
+	
+	public void setDrawer(String drawer) {
+		this.drawer = drawer;
 	}
 	
     public void setDrawStage(Stage drawStage) {
@@ -94,6 +112,8 @@ public class DrawController implements Initializable{
 	}
 
 	private void freeDrawing(){
+		ColorPicker cPick = SideColorPickerController.getInstance().getcPick();
+		Slider slider = SideColorPickerController.getInstance().getSlider();
         gc.setLineWidth(slider.getValue());
         gc.setStroke(cPick.getValue());
         gc.strokeLine(oldX, oldY, lastX, lastY);
@@ -118,42 +138,53 @@ public class DrawController implements Initializable{
     private void onMouseDraggedListener(MouseEvent e){
         this.lastX = e.getX();
         this.lastY = e.getY();
-        
+        System.out.println("Draw click!");
         freeDrawing();
     }
 	
-	public void setMainApp(MainApp mainApp) {
-		this.mainApp = mainApp;
+	public void setMainApp() {
+//		this.mainApp = mainApp;
 	
-		GameWord();
+		//GameWord(word);
 		
 		gc = canvas.getGraphicsContext2D();
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
-		slider.setMin(1);
-		slider.setMax(50);
-		
-		cPick.setValue(Color.BLACK);
-		
 		inputchat.requestFocus();
 	}	
 	
-	public void GameWord() {
-		char[] charArr = word.toCharArray();
-		
-		if(String.valueOf(charArr[0]) != null) {
-			word_num2.setText(String.valueOf(charArr[0]));
+	
+	public void setNowPlayerList( List<String> players ) {
+		int idx  = 0;
+		for(String player : players) {
+			nowPlayerList.get(idx).setText(player);
+			idx++;
 		}
-		if(String.valueOf(charArr[1]) != null) {
-			word_num3.setText(String.valueOf(charArr[1]));
-		}
-		if(String.valueOf(charArr[2]) != null) {
-			word_num4.setText(String.valueOf(charArr[2]));
-		}		
 	}
 	
-	public void Turn(String userturn) {
-		user.setText(userturn);
+	public void setGameWord(String word) {
+		Platform.runLater(()->{
+			char[] charArr = word.toCharArray();
+			
+			if(String.valueOf(charArr[0]) != null) {
+				word_num2.setText(String.valueOf(charArr[0]));
+			}
+			if(String.valueOf(charArr[1]) != null) {
+				word_num3.setText(String.valueOf(charArr[1]));
+			}
+			if(String.valueOf(charArr[2]) != null) {
+				word_num4.setText(String.valueOf(charArr[2]));
+			}	
+		});
+			
+	}
+	
+	public void setDrawTurn(String userturn) {
+		
+		Platform.runLater(()->{
+			user.setText(userturn);
+		});
+		
 	}
 	
 	@FXML
@@ -168,11 +199,17 @@ public class DrawController implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		GameWord();
 		
-		Turn("jihye");
-		
-		
+	}//initialize() end
+	private Boolean turnOver = false;
+	
+	public Boolean getTurnOver() {
+		return turnOver;
+	}
+
+	
+	public void timer() {
+	
 		Task<Boolean> task = new Task<Boolean>() {
 
 			@Override
@@ -180,9 +217,21 @@ public class DrawController implements Initializable{
 				boolean flag = false;
 				for (int i = 0; i <= 50; i++) {
 					updateProgress(i, 50);
-					Thread.sleep(160);
-					flag = true;
+					try {
+						Thread.sleep(160);
+						
+						if(isCancelled()) {
+							flag = true;
+							break;
+						}
+						
+					} catch (InterruptedException e) {
+						if (isCancelled()) { break; }
+					}
+
 				}
+				
+				
 				return flag;
 			}
 
@@ -191,5 +240,21 @@ public class DrawController implements Initializable{
 		bar.progressProperty().bind(task.progressProperty());
 		Thread thread = new Thread(task);
 		thread.start();
+		
+//		try {
+//			turnOver = task.get();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+			
+		return;
+		
+		
+		
 	}
 }

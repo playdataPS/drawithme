@@ -1,6 +1,9 @@
 package com.vo;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import javafx.scene.paint.Color;
 
@@ -17,6 +20,7 @@ public class Game {
 	private  double oldY;
 	private  double lastX;
 	private  double lastY;
+	private Queue<String> drawerQue;
 
 	public Game() {
 		super();
@@ -52,6 +56,16 @@ public class Game {
 		this.lastY = lastY;
 	}
 
+	public Queue<String> getDrawerQue() {
+		return drawerQue;
+	}
+	
+	public void mixDrowingUser(List<String> userList) {//drowing user
+		drawerQue = new LinkedList<String>();
+		Collections.shuffle(userList);		
+		this.drawerQue.addAll(userList);
+	}
+	
 	public String getWord() {
 		return word;
 	}

@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import com.client.ClientListener;
 import com.main.MainApp;
+import com.vo.Data;
 import com.vo.GameStatus;
 import com.vo.Room;
 import com.vo.Status;
@@ -313,7 +314,10 @@ public class WaitingRoomController {
 //			//ClientListener.setUser(user);
 //			userData.setNickname(nickname);
 //			System.out.println("oldUserData nick1 : "+nickname);
-//			ClientListener.getInstance().sendData(userData);
+			
+			Data sendData = new Data();
+			sendData.setStatus(Status.READY);
+			ClientListener.getInstance().sendData(sendData);
 //			
 		
 	}

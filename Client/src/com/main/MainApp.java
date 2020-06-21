@@ -9,6 +9,7 @@ import com.view.DrawController;
 import com.view.LoginController;
 import com.view.SettingController;
 import com.view.WaitingRoomController;
+import com.vo.Game;
 import com.vo.Room;
 import com.vo.Status;
 import com.vo.User;
@@ -73,7 +74,8 @@ public class MainApp extends Application {
       //  ((AnchorPane) gameRoot).getRightAnchor(sideAnswerRoot);
         
        AnchorPane.setRightAnchor(sideAnswerRoot, 13.0);
-       ((AnchorPane) gameRoot).getChildren().add(sideAnswerRoot);
+       AnchorPane.setRightAnchor(sideColorPickerRoot, 13.0);
+       ((AnchorPane) gameRoot).getChildren().add(sideColorPickerRoot);
         gameScene = new Scene(gameRoot);
         
         window.setScene(loginScene);
@@ -115,12 +117,18 @@ public class MainApp extends Application {
         
     }
 	
-    public static void switchToGame() {
+    public static void switchToGame(Game startGameData) {
     	Platform.runLater(()->{
     		window.setOpacity(0.0);
         	window.setScene(gameScene);
+        	
+        	DrawController.getInstance().setNowPlayerList(startGameData.getGameUserList());
+        	DrawController.getInstance().setMainApp();
+        	
+        	
         	 moveToCenter();
              window.setOpacity(1.0);
+             
     	});
     }
     
@@ -209,7 +217,7 @@ public class MainApp extends Application {
 			primaryStage.setScene(scene);
 
 			DrawController controller = loader.getController();
-			controller.setMainApp(this);
+			//controller.setMainApp(this);
 			controller.setDrawStage(primaryStage);
 
 			primaryStage.show();

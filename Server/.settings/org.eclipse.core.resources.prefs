@@ -1,5 +1,7 @@
 eclipse.preferences.version=1
 encoding//src/com/biz/UserBiz.java=UTF-8
+encoding//src/com/controller/UserController.java=UTF-8
 encoding//src/com/dao/UserDao.java=UTF-8
 encoding//src/com/dao/UserSql.java=UTF-8
+encoding//src/com/server/Server.java=UTF-8
 encoding//src/common/JDBCTemplate.java=UTF-8

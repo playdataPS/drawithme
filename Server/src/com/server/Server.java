@@ -6,20 +6,16 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.controller.UserController;
 import com.vo.Data;
 import com.vo.Game;
-import com.vo.GameStatus;
 import com.vo.Status;
 import com.vo.User;
 
@@ -29,6 +25,7 @@ public class Server {
 
 	boolean exit = false;
 	String userip = "";
+	private static String usernickname = "";
 	private static List<ClientHandler> clientList;
 	private static List<Data> buffer;
 	private static Queue<Game> que;
@@ -78,10 +75,37 @@ public class Server {
 						Socket socket = serverSocket.accept();// Client 수락
 						String userip = socket.getInetAddress().toString().replace("/", "");
 						System.out.println("[ "+socket.getInetAddress() + "가 접속했습니다 : "+Thread.currentThread().getName()+" ]");
-						ClientHandler clientHandler = new ClientHandler(userip, socket);
-						clientList.add(clientHandler);
-						System.out.println("Client 개수 "+clientList.size());
-						threadPool.submit(clientHandler);
+						
+						// Login
+						// 처음부터 thread를 만들면 안되는데.. 
+						// nickname을 먼저 받아와야해...
+						String login = UserController.LoginIP(userip);
+						if (login.equals("next1")) {
+							ClientHandler clientHandler = new ClientHandler(userip, socket);
+							login = UserController.LoginNickname(userip, usernickname);
+							if (login.equals("next2")) {
+								// 여기서 thread 생성.. 근데 위에 nickname을 먼저 알아와야하는데...
+								// 어떻게 해야하지..?
+								clientList.add(clientHandler);
+								threadPool.submit(clientHandler);
+								
+							} else {
+								// thread 생성하는 걸로 넘어가면 안돼..
+								continue;
+								
+							}
+						} else {
+							ClientHandler clientHandler = new ClientHandler(userip, socket);
+							UserController.Insert(userip, usernickname);
+							clientList.add(clientHandler);
+							threadPool.submit(clientHandler);
+						}
+						
+//						ClientHandler clientHandler = new ClientHandler(userip, socket);
+//						clientList.add(clientHandler);
+//						
+//						System.out.println("Client 개수 "+clientList.size());
+//						threadPool.submit(clientHandler);
 						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -153,7 +177,7 @@ public class Server {
 					System.out.println("[Client's request: " + socket.getRemoteSocketAddress() + ": " + Thread.currentThread().getName() + "]");
 					data = (Data) ois.readObject();
 					Status state = data.getStatus();
-					String nowNickname = data.getNickname();
+					usernickname = data.getNickname();
 					System.out.println(state);
 					switch (state) {
 					case CONNECTED:

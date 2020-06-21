@@ -62,6 +62,7 @@ public class UserDao implements UserSql {
 		return nickname;
 	}
 
+	// Insert User
 	public int getInsertAll(User user) {
 		int res = 0;
 		PreparedStatement pstm = null;

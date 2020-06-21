@@ -38,6 +38,7 @@ public class Server {
 	private static ExecutorService threadPool;// 스레드풀
 	private static ServerSocket serverSocket;
 	private static int gameCount;
+
 	public Server() {
 
 	}
@@ -47,7 +48,7 @@ public class Server {
 		threadPool = Executors.newFixedThreadPool(THREAD_CNT);
 		userList = new ArrayList<User>();
 		clientList = new Vector<Server.ClientHandler>();
-		clientMap = new LinkedHashMap<Server.ClientHandler,String>();
+		clientMap = new LinkedHashMap<Server.ClientHandler, String>();
 		buffer = new Vector<Data>();
 		que = null;
 		gameCount = 0;
@@ -81,14 +82,13 @@ public class Server {
 						Socket socket = serverSocket.accept();// Client 수락
 						String userip = socket.getInetAddress().toString().replace("/", "");
 						System.out.println("[ " + userip + "가 접속했습니다 : " + Thread.currentThread().getName() + " ]");
-						
-						//여기서 로그인
-						
-						
-						//로그인 성공시, 클라이언트 스레드 생성 
+
+						// 여기서 로그인
+
+						// 로그인 성공시, 클라이언트 스레드 생성
 						ClientHandler clientHandler = new ClientHandler(userip, socket);
 						clientList.add(clientHandler);
-						
+
 						System.out.println("Client 개수 " + clientList.size());
 						threadPool.submit(clientHandler);
 
@@ -172,83 +172,83 @@ public class Server {
 					case CONNECTED:
 						System.out.println("Lobby");
 						List<String> playerList = new Vector<String>();
-						
-						if(clientList.size()!=clientMap.size()) {
+
+						if (clientList.size() != clientMap.size()) {
 							clientMap.put(this, data.getNickname());
 						}
-						for(Map.Entry<ClientHandler, String> enty: clientMap.entrySet()) {
-							System.out.println("client nickname : "+ enty.getValue());
-							playerList.add(enty.getValue());	
+						for (Map.Entry<ClientHandler, String> enty : clientMap.entrySet()) {
+							System.out.println("client nickname : " + enty.getValue());
+							playerList.add(enty.getValue());
 						}
 						data.setGameUserList(playerList);
 						broadCasting();
 						break;
-						
-					case READY: 
+
+					case READY:
 						gameCount++;
-						
-						if(clientList.size()>1&&gameCount==clientList.size()) {
-							//게임 시작 
-							
+
+						if (clientList.size() > 1 && gameCount == clientList.size()) {
+							// 게임 시작
+
 							playerList = new Vector<String>();
-							for(Map.Entry<ClientHandler, String> enty: clientMap.entrySet()) {
-								System.out.println("client nickname : "+ enty.getValue());
-								playerList.add(enty.getValue());	
+							for (Map.Entry<ClientHandler, String> enty : clientMap.entrySet()) {
+								System.out.println("client nickname : " + enty.getValue());
+								playerList.add(enty.getValue());
 							}
 							que = new LinkedList<Game>();
-							que.addAll(new GameSession().createGameQue(playerList)); //전체 게임 큐 생성 
-							
-							data.setStatus(Status.PLAYING); //모두 플레잉 
+							que.addAll(new GameSession().createGameQue(playerList)); // 전체 게임 큐 생성
+
+							data.setStatus(Status.PLAYING); // 모두 플레잉
 							data.setGameUserList(playerList);// 현재 접속한 유저 리스트
 							broadCasting();
 						}
-						
+
 						break;
 
 					case PLAYING:
-						
+
 						System.out.println(que.size());
 						Game nowGame = null;
-						if(!que.isEmpty()) {
+						if (!que.isEmpty()) {
 							System.out.println("게임 시작함");
 							nowGame = que.peek();
-							
+
 							String challenger = nowGame.getChallenger();
 							Queue<String> drawers = nowGame.getDrawerQue();
-							
-							
-							if(!drawers.isEmpty()) {	
+
+							if (!drawers.isEmpty()) {
 								String nowDrawer = drawers.peek();
 								data.setChallenger(challenger);
 								data.setDrawer(nowDrawer);
 								data.setStatus(Status.PLAYING);
 								data.setWord(nowGame.getWord());
-								
+
 							}
-							
+
 							//
-							if(drawers.isEmpty()) {	que.poll();}
-							
-							//if drawers is empty -> que.poll();
-							
-							
-						}else {
+							if (drawers.isEmpty()) {
+								que.poll();
+							}
+
+							// if drawers is empty -> que.poll();
+
+						} else {
 							System.out.println("게임 끝");
-							
+
 						}
-						
+
 						broadCasting();
-						
+
 						break;
 
 					case LOBBY_CHAT:
-						
+						broadCasting();
 						break;
-						
+
 					case RANKING:
-						
+
 						break;
-						
+
 					case DISCONNECTION:
 						System.out.println("DISCONNECTED");
 						clientList.remove(ClientHandler.this);
@@ -260,7 +260,7 @@ public class Server {
 						} catch (Exception e) {
 							e.printStackTrace();
 						} // try~catch end
-						
+
 						break;
 
 					default:

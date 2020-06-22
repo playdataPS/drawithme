@@ -112,49 +112,27 @@ public class ClientListener implements Runnable {
 
 				case PLAYING: // game view update
 					System.out.println("game playing GameController");
-					if (response.getChallenger() == null) {
+					System.out.println("Turn : "+DrawController.getInstance().getTurnOver());
+					if (response.getChallenger() == null&&response.getDrawer()==null) {
 						visited = true;
 						sendData(response);
-
 					} else {
-
 						String loginUser = LoginController.getInstance().getPlayerName();
 						System.out.println("[ login nickname : " + loginUser + " , challenger : "
 								+ response.getChallenger() + ", drawer : " + response.getDrawer() + " ] ");
 						
+						Game game = new Game(response.getWord(), response.getGameUserList());
+						game.setChallenger(response.getChallenger());
+						game.setDrawer(response.getDrawer());
+						
 						//UI update - 공통 
+						MainApp.switchToGame(game);
 						
 						
-						
-						if (response.getChallenger().equals(loginUser)) {
-							System.out.println("Challenger" + loginUser);
-
-						} else if (response.getDrawer().equals(loginUser)) {
-							System.out.println("Drawer");
-//							System.out.println(" Turn be : "+DrawController.getInstance().getTask().getValue());
-							DrawController.getInstance().setDrawer(response.getDrawer());
-							Game game = new Game(response.getWord(), response.getGameUserList());
-							MainApp.switchToGame(game);
-							SideColorPickerController.getInstance().settingTool();
-							DrawController.getInstance().setGameWord(game.getWord());
-							
-							DrawController.getInstance().timer();
-							
-							System.out.println(" Turn af : "+DrawController.getInstance().getTurnOver());
-							
-							
-							
-
-						} else {
-							System.out.println("other");
-
-						}
-
-						System.out.println("ok!");
 					}
 
 					break;
-				case GAME_CHAR:
+				case GAME_CHAT:
 					break;
 
 				case LOBBY_CHAT:
@@ -198,7 +176,7 @@ public class ClientListener implements Runnable {
 
 			System.out.println();
 			oos.writeObject(requestData);
-			oos.flush();
+//			oos.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

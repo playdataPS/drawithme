@@ -8,6 +8,7 @@ import com.view.AnswerController;
 import com.view.DrawController;
 import com.view.LoginController;
 import com.view.SettingController;
+import com.view.SideColorPickerController;
 import com.view.WaitingRoomController;
 import com.vo.Game;
 import com.vo.Room;
@@ -73,10 +74,14 @@ public class MainApp extends Application {
         gameRoot = (AnchorPane) FXMLLoader.load(getClass().getResource("../view/Draw.fxml"));
       //  ((AnchorPane) gameRoot).getRightAnchor(sideAnswerRoot);
         
-       AnchorPane.setRightAnchor(sideAnswerRoot, 13.0);
-       AnchorPane.setRightAnchor(sideColorPickerRoot, 13.0);
-       ((AnchorPane) gameRoot).getChildren().add(sideColorPickerRoot);
+       AnchorPane.setBottomAnchor(sideColorPickerRoot, 246.0);
+       AnchorPane.setRightAnchor(sideColorPickerRoot, 22.0);
+       AnchorPane.setRightAnchor(sideAnswerRoot, 22.0);
+       AnchorPane.setBottomAnchor(sideAnswerRoot, 246.0);
+       
+//       ((AnchorPane) gameRoot).getChildren().add(sideColorPickerRoot);
         gameScene = new Scene(gameRoot);
+        
         
         window.setScene(loginScene);
         window.setTitle("Login");
@@ -119,15 +124,35 @@ public class MainApp extends Application {
 	
     public static void switchToGame(Game startGameData) {
     	Platform.runLater(()->{
+    		String loginUserNickname = LoginController.getInstance().getPlayerName();
+    		String challenger = startGameData.getChallenger();
+    		String drawer = startGameData.getDrawer();
+    		
     		window.setOpacity(0.0);
-        	window.setScene(gameScene);
-        	
+    		
+    		DrawController.getInstance().setDrawer(startGameData.getDrawer());
         	DrawController.getInstance().setNowPlayerList(startGameData.getGameUserList());
         	DrawController.getInstance().setMainApp();
+        	DrawController.getInstance().setGameWord(startGameData.getWord());
+        	DrawController.getInstance().timer();
         	
+        	if(loginUserNickname.equals(challenger)) {
+        		((AnchorPane) gameRoot).getChildren().add(sideAnswerRoot);
+        	}else if(loginUserNickname.equals(drawer)) {
+        		SideColorPickerController.getInstance().settingTool();
+        		DrawController.getInstance().setCanvasSetting();
+        		((AnchorPane) gameRoot).getChildren().add(sideColorPickerRoot);
+        	}
+     
+//             gameScene = new Scene(gameRoot);
+
+            
+             
+        	window.setScene(gameScene);
+        	moveToCenter();
         	
-        	 moveToCenter();
-             window.setOpacity(1.0);
+        	System.out.println("Turn : "+DrawController.getInstance().getTurnOver());
+            window.setOpacity(1.0);
              
     	});
     }

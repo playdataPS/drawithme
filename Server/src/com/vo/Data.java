@@ -17,7 +17,7 @@ public class Data implements Serializable {
 	private  String word;
 	private  String color; // 특이사항 아래 생성자 참고
 	private  double lineW;
-	private  String challenger;
+	private  String challenger; 
 	private  String drawer;
 	private  List<String> gameUserList;
 	private  double startX;

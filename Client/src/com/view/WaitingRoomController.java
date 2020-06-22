@@ -318,7 +318,7 @@ public class WaitingRoomController {
 			Data sendData = new Data();
 			sendData.setStatus(Status.READY);
 			ClientListener.getInstance().sendData(sendData);
-//			
+//			 
 		
 	}
 	

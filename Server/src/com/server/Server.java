@@ -32,12 +32,16 @@ public class Server {
 	String userip = "";
 	private static List<ClientHandler> clientList;
 	private static Map<ClientHandler, String> clientMap;
+	private static Map<String, ObjectOutputStream> nowPlayers;
 	private static List<Data> buffer;
 	private static Queue<Game> que;
+	private static Queue<String> drawers;
 	private static final int THREAD_CNT = 9; // 최대 스레드 개수
 	private static ExecutorService threadPool;// 스레드풀
 	private static ServerSocket serverSocket;
 	private static int gameCount;
+	
+
 	public Server() {
 
 	}
@@ -47,8 +51,9 @@ public class Server {
 		threadPool = Executors.newFixedThreadPool(THREAD_CNT);
 		userList = new ArrayList<User>();
 		clientList = new Vector<Server.ClientHandler>();
-		clientMap = new LinkedHashMap<Server.ClientHandler,String>();
+		clientMap = new LinkedHashMap<Server.ClientHandler, String>();
 		buffer = new Vector<Data>();
+		nowPlayers = new LinkedHashMap<String, ObjectOutputStream>();
 		que = null;
 		gameCount = 0;
 	}
@@ -62,7 +67,7 @@ public class Server {
 //		}
 		init();
 
-		clientList = new Vector<Server.ClientHandler>();
+//		clientList = new Vector<Server.ClientHandler>();
 		try {
 			serverSocket = new ServerSocket(port);
 
@@ -81,14 +86,13 @@ public class Server {
 						Socket socket = serverSocket.accept();// Client 수락
 						String userip = socket.getInetAddress().toString().replace("/", "");
 						System.out.println("[ " + userip + "가 접속했습니다 : " + Thread.currentThread().getName() + " ]");
-						
-						//여기서 로그인
-						
-						
-						//로그인 성공시, 클라이언트 스레드 생성 
+
+						// 여기서 로그인
+
+						// 로그인 성공시, 클라이언트 스레드 생성
 						ClientHandler clientHandler = new ClientHandler(userip, socket);
 						clientList.add(clientHandler);
-						
+
 						System.out.println("Client 개수 " + clientList.size());
 						threadPool.submit(clientHandler);
 
@@ -136,6 +140,8 @@ public class Server {
 		ObjectOutputStream oos;
 		ObjectInputStream ois;
 		Data data;
+		List<String> playerList;
+		
 		boolean exit = false;
 
 		public ClientHandler() {
@@ -171,84 +177,108 @@ public class Server {
 					switch (state) {
 					case CONNECTED:
 						System.out.println("Lobby");
-						List<String> playerList = new Vector<String>();
-						
-						if(clientList.size()!=clientMap.size()) {
+						playerList = new Vector<String>();
+
+						if (clientList.size() != clientMap.size()) {
 							clientMap.put(this, data.getNickname());
 						}
-						for(Map.Entry<ClientHandler, String> enty: clientMap.entrySet()) {
-							System.out.println("client nickname : "+ enty.getValue());
-							playerList.add(enty.getValue());	
+						for (Map.Entry<ClientHandler, String> enty : clientMap.entrySet()) {
+							System.out.println("client nickname : " + enty.getValue());
+							playerList.add(enty.getValue());
 						}
 						data.setGameUserList(playerList);
 						broadCasting();
 						break;
-						
-					case READY: 
+
+					case READY:
 						gameCount++;
-						
-						if(clientList.size()>1&&gameCount==clientList.size()) {
-							//게임 시작 
-							
+
+						if (clientList.size() > 1 && gameCount == clientList.size()) {
+							// 게임 시작
+
 							playerList = new Vector<String>();
-							for(Map.Entry<ClientHandler, String> enty: clientMap.entrySet()) {
-								System.out.println("client nickname : "+ enty.getValue());
-								playerList.add(enty.getValue());	
+							for (Map.Entry<ClientHandler, String> enty : clientMap.entrySet()) {
+								System.out.println("client nickname : " + enty.getValue());
+								playerList.add(enty.getValue());
 							}
 							que = new LinkedList<Game>();
-							que.addAll(new GameSession().createGameQue(playerList)); //전체 게임 큐 생성 
-							
-							data.setStatus(Status.PLAYING); //모두 플레잉 
+							que.addAll(new GameSession().createGameQue(playerList)); // 전체 게임 큐 생성
+
+							data.setStatus(Status.PLAYING); // 모두 플레잉
 							data.setGameUserList(playerList);// 현재 접속한 유저 리스트
 							broadCasting();
 						}
-						
+
 						break;
 
 					case PLAYING:
-						
+
 						System.out.println(que.size());
 						Game nowGame = null;
-						if(!que.isEmpty()) {
+
+						if (!que.isEmpty()) {
 							System.out.println("게임 시작함");
 							nowGame = que.peek();
-							
+
 							String challenger = nowGame.getChallenger();
-							Queue<String> drawers = nowGame.getDrawerQue();
-							
-							
-							if(!drawers.isEmpty()) {	
-								String nowDrawer = drawers.peek();
-								data.setChallenger(challenger);
-								data.setDrawer(nowDrawer);
-								data.setStatus(Status.PLAYING);
-								data.setWord(nowGame.getWord());
+							drawers = nowGame.getDrawerQue();
+							GameStatus gameStatus = data.getGameStatus();
+							if (gameStatus != null) {
+
+								switch (gameStatus) {
+								case CHALLENGER:
+
+									break;
+
+								case DRAWER:
+
+									break;
+
+								case TURN:
+									//한 턴 끝남
+									gameCount++;
+									
+									
+									System.out.println("turn over ");
+									
+									break;
+
+								default:
+
+									break;
+								}//switch end 
+								if(gameCount==clientList.size()) {
+									drawers.poll();
+									gameCount = 0;
+								}
 								
+								data.setGameUserList(playerList);
+								progressGameTurn(challenger, nowGame.getWord());
+								sendToClient();
+							
+							}else {
+								
+								progressGameTurn(challenger, nowGame.getWord());
+								
+								sendToClient(); // 클라이언트에서 동시에 접속하니까 보내는건 접속한 스레드한테 각자 보냄
 							}
 							
-							//
-							if(drawers.isEmpty()) {	que.poll();}
-							
-							//if drawers is empty -> que.poll();
-							
-							
-						}else {
+
+						} else {
 							System.out.println("게임 끝");
-							
+
 						}
-						
-						broadCasting();
-						
+
 						break;
 
 					case LOBBY_CHAT:
-						
+
 						break;
-						
+
 					case RANKING:
-						
+
 						break;
-						
+
 					case DISCONNECTION:
 						System.out.println("DISCONNECTED");
 						clientList.remove(ClientHandler.this);
@@ -260,7 +290,7 @@ public class Server {
 						} catch (Exception e) {
 							e.printStackTrace();
 						} // try~catch end
-						
+
 						break;
 
 					default:
@@ -284,13 +314,49 @@ public class Server {
 			} // while end
 
 		}// run() end
+		
+		public void progressGameTurn(String challenger, String word ) {
+			if (!drawers.isEmpty()) {
+				String nowDrawer = drawers.peek();
+				data.setChallenger(challenger);
+				data.setDrawer(nowDrawer);
+				data.setStatus(Status.PLAYING);
+				data.setWord(word);
+				
+				System.out.println("[ clientNickname " + clientMap.get(this) + " ]");
+				// broadCasting();	
+			} 
+			
+			if (drawers.isEmpty()) {
+				que.poll();
+			}
+		}
+
+		public void sendToClient() {
+			for (Map.Entry<ClientHandler, String> entry : clientMap.entrySet()) {
+				if (entry.getKey().equals(this)) {
+					try {
+						System.out.println("[ " + entry.getValue() + " send data to server ]");
+						entry.getKey().oos.writeObject(data);
+						entry.getKey().oos.flush();
+						break;
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			} // for end
+
+		}// sendToClient end
 
 		public void broadCasting() {// 전체 데이터를 보내줌
-			System.out.println("broad + " + userList.size());
 			// 전체 채팅 회원에게 내용 출력
 			for (ClientHandler client : clientList) {
 				try {
+					System.out.println("[ " + clientMap.get(client) + " send data to server ]");
 					client.oos.writeObject(data);
+					client.oos.flush();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

@@ -156,8 +156,20 @@ public class WaitingRoomController {
 		CurrUserCount.setText(String.valueOf(x));
 	}
 
-	public void setFirstMessage() { // 처음 입장한 사람이 있을때 "000" 님이 입장하셨습니다.
+	public void setFirstMessage(String nickname) { // 처음 입장한 사람이 있을때 "000" 님이 입장하셨습니다.
+		String message = "님이 입장하셨습니다.";
+		String Contents = chatArea.getText();
+		if (Contents.length() > 0) {
+			System.out.println("0>");
+			chatArea.setText(Contents + "\n" + nickname + " " + message);
+		} else {
+			System.out.println("없졍");
+			chatArea.setText(nickname + " " + message);
+		}
+	}
 
+	public void setLastMessage(String nickname) {
+		//사용자가 나갔을때, remove 되어서 그 사용자의 정보를 알기가 어렵넹
 	}
 
 	@FXML

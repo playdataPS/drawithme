@@ -62,7 +62,7 @@ public class ClientListener implements Runnable {
 			User user = new User(clientIP, nickname);
 			Data client = new Data(user);
 			client.setStatus(Status.CONNECTED);
-
+//			client.setMessage("님이 입장하셨습니다.");
 			oos.writeObject(client);
 			System.out.println("is connected the server socket");
 
@@ -98,6 +98,7 @@ public class ClientListener implements Runnable {
 					// 현재 접속 유저
 					// List<User> nowUserList = user.getUserList();
 					System.out.println("WaitingRoomController - login!! ");
+					WaitingRoomController.getInstance().setFirstMessage(response.getNickname());
 					break;
 
 				case INCORRECT:

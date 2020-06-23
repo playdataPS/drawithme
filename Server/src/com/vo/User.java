@@ -6,7 +6,7 @@ public class User {
 	private int no;
 	private String ip;
 	private String nickname;
-	private  String score;
+	private int score;
 	private  Date regdate;
 	public User() {
 		super();
@@ -20,7 +20,14 @@ public class User {
 		this.ip = ip;
 		this.nickname = nickname;
 	}
-	public User(int no, String ip, String nickname, String score, Date regdate) {
+	
+	public User(String nickname, int score) {
+		super();
+		this.nickname = nickname;
+		this.score = score;
+	}
+	
+	public User(int no, String ip, String nickname, int score, Date regdate) {
 		super();
 		this.no = no;
 		this.ip = ip;
@@ -46,10 +53,10 @@ public class User {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-	public String getScore() {
+	public int getScore() {
 		return score;
 	}
-	public void setScore(String score) {
+	public void setScore(int score) {
 		this.score = score;
 	}
 	public Date getRegdate() {

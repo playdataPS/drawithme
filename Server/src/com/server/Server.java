@@ -6,8 +6,10 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -33,6 +35,8 @@ public class Server {
 	private static ExecutorService threadPool; //스레드풀 
 	private static ServerSocket serverSocket;
 	
+	private static Map<String, Integer> scoreMap;
+	
 
 	public Server() {
 		
@@ -44,6 +48,7 @@ public class Server {
 		clientList = new Vector<Server.ClientHandler>();	
 		buffer = new Vector<Data>();
 		que = null;
+		scoreMap = new HashMap<String, Integer>();
 	}
 
 	public static void Start(int port) {
@@ -178,6 +183,7 @@ public class Server {
 					data = (Data) ois.readObject();
 					Status state = data.getStatus();
 					usernickname = data.getNickname();
+					String nowNickname = data.getNickname();
 					System.out.println(state);
 					switch (state) {
 					case CONNECTED:
@@ -194,6 +200,14 @@ public class Server {
 					case LOBBY_CHAT:
 						break;
 					case RANKING:
+						// 지혜언니코드
+						
+						
+						int turnscore = scoreMap.get(nowNickname);
+						int dbscore = UserController.getScore(nowNickname);
+						int newscore = dbscore + turnscore;
+						UserController.scoreUpdate(nowNickname, newscore);
+						
 						break;
 					case DISCONNECTION:
 						System.out.println("DISCONNECTED");

@@ -15,7 +15,7 @@ public class Data implements Serializable {
 	private  String score;
 	private  Date regdate;
 	private  String word;
-	private  String color; // 특이사항 아래 생성자 참고
+	private  String color; // �듅�씠�궗�빆 �븘�옒 �깮�꽦�옄 李멸퀬
 	private  double lineW;
 	private  String challenger;
 	private  String drawer;
@@ -26,10 +26,10 @@ public class Data implements Serializable {
 	private  double oldY;
 	private  double lastX;
 	private  double lastY;
-	private  String message; // Data 객체만 같고 있는 것1
-	private  Status status; // Data 객체만 같고 있는 것2
-	private  GameStatus gameStatus; // Data 객체만 같고 있는 것3
-	private  UserStatus userStatus; // Data 객체만 같고 있는 것4
+	private  String message; // Data 媛앹껜留� 媛숆퀬 �엳�뒗 寃�1
+	private  Status status; // Data 媛앹껜留� 媛숆퀬 �엳�뒗 寃�2
+	private  GameStatus gameStatus; // Data 媛앹껜留� 媛숆퀬 �엳�뒗 寃�3
+	private  UserStatus userStatus; // Data 媛앹껜留� 媛숆퀬 �엳�뒗 寃�4
 	public Data() {
 		super();
 	}
@@ -38,13 +38,13 @@ public class Data implements Serializable {
 		this.userNo = user.getNo();
 		this.ip = user.getIp();
 		this.nickname = user.getNickname();
-		this.score = user.getScore();
+		this.score = String.valueOf(user.getScore());
 		this.regdate = user.getRegdate();
 	}
 	public Data(Game game) {
 		super();
 		this.word = game.getWord();
-		// javafx.scene.paint.Color를 toString()하면 hex web value를 문자열로 받아올 수 있음
+		// javafx.scene.paint.Color瑜� toString()�븯硫� hex web value瑜� 臾몄옄�뿴濡� 諛쏆븘�삱 �닔 �엳�쓬
 		this.color = game.getColor().toString(); 
 		this.lineW = game.getLineW();
 		this.challenger = game.getChallenger();
@@ -62,7 +62,7 @@ public class Data implements Serializable {
 		this.userNo = user.getNo();
 		this.ip = user.getIp();
 		this.nickname = user.getNickname();
-		this.score = user.getScore();
+		this.score = String.valueOf(user.getScore());
 		this.regdate = user.getRegdate();
 		this.word = game.getWord();
 		this.color = game.getColor().toString();

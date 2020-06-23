@@ -33,6 +33,12 @@ public class UserController {
 		
 		return status;
 	}
+	
+	public static int getScore(String nickname) {
+		int score = new UserBiz().getScore(nickname);
+		
+		return score;
+	}
 
 	public static void Insert(String IP, String user) {
 		User info = new User(IP, user);
@@ -41,6 +47,16 @@ public class UserController {
 
 		if (res > 0) {
 			System.out.println("INSERT DB");
+		}
+	}
+	
+	public static void scoreUpdate(String user, int score) {
+		User info = new User(user, score);
+		
+		int res = new UserBiz().getUpdate(info);
+		
+		if (res > 0) {
+			System.out.println("UPDATE DB");
 		}
 	}
 }

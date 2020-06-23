@@ -61,6 +61,34 @@ public class UserDao implements UserSql {
 		}
 		return nickname;
 	}
+	
+	// Score Confirmation
+	public int getScore(String nickname) {
+		PreparedStatement pstm = null;
+		ResultSet rs = null;
+		int score = 0;
+		
+		try {
+			pstm = conn.prepareStatement(select_score);
+			
+			pstm.setString(1, nickname);
+			
+			rs = pstm.executeQuery();
+			
+			if (rs.next()) {
+				score = rs.getInt(4);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			Close(rs);
+			Close(pstm);
+		}
+		
+		return score;
+	}
 
 	// Insert User
 	public int getInsertAll(User user) {
@@ -88,28 +116,31 @@ public class UserDao implements UserSql {
 
 		return res;
 	}
-
-//	public User getNickIP(String ip) {
-//		PreparedStatement pstm = null;
-//		ResultSet rs = null;
-//		User usernick = null;
-////		String vo = null;
-//
-//		try {
-//			pstm = conn.prepareStatement(select_nickname);
-//			pstm.setString(1, ip);
-//
-//			rs = pstm.executeQuery();
-//			while (rs.next()) {
-//				usernick = new User(rs.getString(1), rs.getString(2));
-//			}
-//		} catch (SQLException e) {
-//			System.out.println(e.toString());
-//		} finally {
-//			Close(rs);
-//			Close(pstm);
-//		}
-//
-//		return usernick;
-//	}
+	
+	// Update User Information
+	public int getUpdate(User user) {
+		int res = 0;
+		PreparedStatement pstm = null;
+		
+		try {
+			pstm = conn.prepareStatement(update);
+			
+			pstm.setInt(1, user.getScore());
+			pstm.setString(2, user.getNickname());
+			
+			res = pstm.executeUpdate();
+			
+			if (res > 0) {
+				Commit(conn);
+			}
+			
+		} catch (Exception e) {
+			Rollback(conn);
+			
+		} finally {
+			Close(pstm);
+		}
+		
+		return res;
+	}
 }

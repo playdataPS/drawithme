@@ -24,6 +24,7 @@ import com.vo.User;
 import com.vo.UserStatus;
 
 import javafx.application.Platform;
+import javafx.scene.paint.Color;
 
 public class ClientListener implements Runnable {
 	private String serverIP;
@@ -41,6 +42,7 @@ public class ClientListener implements Runnable {
 	private static ClientListener instance;
 	private static MainApp mainApp;
 	private static Room room;
+	
 
 	public ClientListener() {
 		instance = this;
@@ -126,12 +128,42 @@ public class ClientListener implements Runnable {
 						game.setDrawer(response.getDrawer());
 						
 						//UI update - 공통 
-						MainApp.switchToGame(game);
-						
+						MainApp.switchToGame(game);	
 						
 					}
 
 					break;
+					
+				case PRESSED:
+					System.out.println("PRESSED");
+					System.out.println(response.getColor());
+		
+					DrawController.getInstance().setPressedData(response);
+					
+					break;
+					
+				case DRAGGED:
+					System.out.println("DRAGGED");
+					System.out.println(response.getColor());
+			
+					DrawController.getInstance().setDraggedData(response);
+					DrawController.getInstance().freeDrawing();
+					
+//					Data requestData = new Data();
+//			        requestData.setStatus(Status.DRAWING);
+//			        requestData.setOldX(response.getLastX());
+//			        requestData.setOldY(response.getLastY());
+//			        
+//			        ClientListener.getInstance().sendData(requestData);
+					
+					break;
+					
+				case DRAWING:
+					System.out.println("DRAWING : "+response.getLineW());
+					DrawController.getInstance().setGc();
+					DrawController.getInstance().freeDrawing(response);
+					break;
+					
 				case GAME_CHAT:
 					break;
 
@@ -171,12 +203,12 @@ public class ClientListener implements Runnable {
 		}
 	}
 
-	public void sendData(Data requestData) {
+	public synchronized void sendData(Data requestData) {
 		try {
 
 			System.out.println();
 			oos.writeObject(requestData);
-//			oos.flush();
+			oos.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

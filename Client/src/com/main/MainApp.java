@@ -37,10 +37,10 @@ public class MainApp extends Application {
 	private static Parent sideColorPickerRoot;
 	private static Parent sideAnswerRoot;
 	
-	private static Stage primaryStage;
+	private static Stage primaryStage;	
 	private static Scene loginScene, lobbyScene, gameScene;
 	 public static Stage window;
-
+	public static String nowChallenger = "-1";
 	public Stage getPrimaryStage() {
 		return primaryStage;
 	}
@@ -125,7 +125,8 @@ public class MainApp extends Application {
     public static void switchToGame(Game startGameData) {
     	Platform.runLater(()->{
     		String loginUserNickname = LoginController.getInstance().getPlayerName();
-    		String challenger = startGameData.getChallenger();
+    		boolean flag = nowChallenger!=null&& !nowChallenger.equals(startGameData.getChallenger())? true:false;
+    		nowChallenger = startGameData.getChallenger();
     		String drawer = startGameData.getDrawer();
     		
     		window.setOpacity(0.0);
@@ -135,12 +136,23 @@ public class MainApp extends Application {
         	DrawController.getInstance().setMainApp();
         	DrawController.getInstance().setGameWord(startGameData.getWord());
         	DrawController.getInstance().timer();
+        	System.out.println("flag "+flag);
+        	if(flag)	DrawController.getInstance().setCanvasSetting();
         	
-        	if(loginUserNickname.equals(challenger)) {
+        	if(((AnchorPane) gameRoot).getChildren().contains(sideAnswerRoot)) {
+    			((AnchorPane) gameRoot).getChildren().remove(sideAnswerRoot);
+    		}else if(((AnchorPane) gameRoot).getChildren().contains(sideColorPickerRoot)) {
+    			((AnchorPane) gameRoot).getChildren().remove(sideColorPickerRoot);
+    		}
+        	
+        	if(loginUserNickname.equals(nowChallenger)) {
+        		
         		((AnchorPane) gameRoot).getChildren().add(sideAnswerRoot);
+        		
         	}else if(loginUserNickname.equals(drawer)) {
+        		
+        		
         		SideColorPickerController.getInstance().settingTool();
-        		DrawController.getInstance().setCanvasSetting();
         		((AnchorPane) gameRoot).getChildren().add(sideColorPickerRoot);
         	}
      
@@ -149,7 +161,7 @@ public class MainApp extends Application {
             
              
         	window.setScene(gameScene);
-        	moveToCenter();
+//        	moveToCenter();
         	
         	System.out.println("Turn : "+DrawController.getInstance().getTurnOver());
             window.setOpacity(1.0);

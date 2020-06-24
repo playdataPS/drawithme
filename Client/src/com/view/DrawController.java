@@ -29,6 +29,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 public class DrawController implements Initializable{
@@ -83,7 +84,10 @@ public class DrawController implements Initializable{
 	
     double startX, startY, lastX,lastY,oldX,oldY;
     double hg;
-
+  
+	String color;
+	
+	double lineW;
 	
 	private String word = "바나나";
 	
@@ -93,6 +97,13 @@ public class DrawController implements Initializable{
 	private static DrawController instance;
 	
 	private String drawer;
+	
+	
+	public void setGc() {
+		gc = canvas.getGraphicsContext2D();
+	}
+	
+	
 	
 	public static DrawController getInstance() {
 		return instance;
@@ -115,52 +126,96 @@ public class DrawController implements Initializable{
 		this.drawStage = drawStage;
 	}
 
-	private void freeDrawing(){
+	public void freeDrawing(){
 		Platform.runLater(()->{
-			ColorPicker cPick = SideColorPickerController.getInstance().getcPick();
-			Slider slider = SideColorPickerController.getInstance().getSlider();
-			System.out.println("cPick : "+cPick+" , slider : "+slider);
-	        gc.setLineWidth(slider.getValue());
-	        gc.setStroke(cPick.getValue());
-	        gc.strokeLine(oldX, oldY, lastX, lastY);
+//			ColorPicker cPick = SideColorPickerController.getInstance().getcPick();
+//			Slider slider = SideColorPickerController.getInstance().getSlider();
+//			System.out.println("cPick : "+cPick+" , slider : "+slider);
+	        gc.setLineWidth(lineW);
+	        gc.setStroke(Paint.valueOf(color));
+	        gc.strokeLine(oldX,oldY, lastX, lastY);
 	        oldX = lastX;
 	        oldY = lastY;
-	        System.out.println(String.format("oldX : %f, oldY : %f, lastX : %f, lastY : %f", oldX, oldY, lastX, lastY));
-	        
-	        System.out.println("color: "+cPick.getValue());
 			
+		});
+    }
+	
+	public void freeDrawing(Data gameData){
+		Platform.runLater(()->{
+			
+			System.out.println("Drawing: "+gameData.getLineW());
+	        gc.setLineWidth(gameData.getLineW());
+	        gc.setStroke(Paint.valueOf(gameData.getColor()));
+	        gc.strokeLine(gameData.getOldX(),gameData.getOldY(), gameData.getLastX(), gameData.getLastY());
+	        oldX = lastX;
+	        oldY = lastY;
+	        
+	        Data requestData = new Data();
+	        requestData.setStatus(Status.DRAWING);
+	        requestData.setOldX(gameData.getLastX());
+	        requestData.setOldY(gameData.getLastY());
+	        
+	        ClientListener.getInstance().sendData(requestData);
 		});
     }
 	
 	@FXML
     private void onMousePressedListener(MouseEvent e){
-		  ColorPicker cPick = SideColorPickerController.getInstance().getcPick();
-			Slider slider = SideColorPickerController.getInstance().getSlider();
-        this.startX = e.getX();
-        this.startY = e.getY();
-        this.oldX = e.getX();
-        this.oldY = e.getY();
-        Game game = new Game(cPick.getValue(), slider.getValue(), startX, startY);
-        Data requestData = new Data(game);
-        requestData.setStatus(Status.PLAYING);
-        requestData.setGameStatus(GameStatus.DRAWER);
-      //  ClientListener.getInstance().sendData(requestData);
+		
+		if(LoginController.getInstance().getPlayerName().equals(drawer)) {
+		  ColorPicker sideCPick = SideColorPickerController.getInstance().getcPick();
+			Slider sideSlider = SideColorPickerController.getInstance().getSlider();
+     
+//        Game game = new Game(cPick.getValue(), slider.getValue(), startX, startY);
+        Data requestData = new Data();
+        requestData.setColor(sideCPick.getValue().toString());
+        requestData.setLineW(sideSlider.getValue());
+       
+        requestData.setStartX(e.getX());
+        requestData.setStartY(e.getY());
+        requestData.setOldX(e.getX());
+        requestData.setOldY(e.getY());
+        requestData.setStatus(Status.PRESSED);
+//        requestData.setGameStatus(GameStatus.PRESSED);
+        ClientListener.getInstance().sendData(requestData);
+		}
     }
+	
+	public void setPressedData(Data gameData) {
+		 Platform.runLater(()->{
+			this.lineW = gameData.getLineW();
+		    this.color = gameData.getColor();
+		    this.startX = gameData.getStartX();
+		    this.startY = gameData.getStartY();
+		    this.oldX = gameData.getOldX();
+		    this.oldY = gameData.getOldY();
+		 });
+	}
 	
     @FXML
     private void onMouseDraggedListener(MouseEvent e){
     	
-        this.lastX = e.getX();
-        this.lastY = e.getY();
+    	if(LoginController.getInstance().getPlayerName().equals(drawer)) {
       
         System.out.println("Draw click!");
-        Game game = new Game(oldX, oldY, lastX, lastY);
-        Data requestData = new Data(game);
-        requestData.setStatus(Status.PLAYING);
-        requestData.setGameStatus(GameStatus.DRAWER);
-   //     ClientListener.getInstance().sendData(requestData); 
+//        Game game = new Game(oldX, oldY, lastX, lastY);
+        Data requestData = new Data();
+        requestData.setLastX(e.getX());
+        requestData.setLastY(e.getY());
+        
+        requestData.setStatus(Status.DRAGGED);
+//        requestData.setGameStatus(GameStatus.DRAGGED);
+        ClientListener.getInstance().sendData(requestData); 
 //        freeDrawing();
+    	}
     }
+    
+   public void setDraggedData(Data gameData) {
+	  Platform.runLater(()->{
+	   this.lastX = gameData.getLastX();
+       this.lastY = gameData.getLastY();
+	  });
+   }
     
     public void setCanvasSetting() {
     	gc = canvas.getGraphicsContext2D();
@@ -256,10 +311,12 @@ public class DrawController implements Initializable{
 				if(isCancelled()) {
 					System.out.println("cancel");
 					
-					Data requestData = new Data();
-					requestData.setStatus(Status.PLAYING);
-					requestData.setGameStatus(GameStatus.TURN);
-					ClientListener.getInstance().sendData(requestData);
+					if(LoginController.getInstance().getPlayerName().equals(drawer)) {
+						Data requestData = new Data();
+						requestData.setStatus(Status.PLAYING);
+						requestData.setGameStatus(GameStatus.TURN);
+						ClientListener.getInstance().sendData(requestData);
+					}
 					
 					return null;
 				}

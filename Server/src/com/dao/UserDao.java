@@ -150,12 +150,10 @@ public class UserDao implements UserSql {
 
 			try {
 				pstm = conn.prepareStatement(insertAll);
-
 				pstm.setString(1, user.getIp());
 				pstm.setString(2, user.getNickname());
 
 				res = pstm.executeUpdate();
-
 				if (res > 0) {
 					Commit(conn);
 				}

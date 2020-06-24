@@ -164,10 +164,10 @@ public class Server {
 					data = (Data) ois.readObject();
 					Status state = data.getStatus();
 					String nowNickname = data.getNickname();
+					String ip = socket.getInetAddress().toString().substring(1, socket.getInetAddress().toString().length());
 					System.out.println(state);
 					switch (state) {
 					case CONNECTED:
-						String ip = socket.getInetAddress().toString().substring(1, socket.getInetAddress().toString().length());
 						User user = new User(ip, nowNickname);
 						int checkIP = new UserBiz().ConfirmUserIP(ip);
 						List<String> playerList = new Vector<String>();
@@ -198,7 +198,8 @@ public class Server {
 								exit = true;
 							}
 						} else {
-							int res = new UserBiz().getSignUp(user);
+							int res = new UserBiz().getInsertAll(user);
+							//int res = new UserBiz().getSignUp(user);
 							if (res > 0) {
 								System.out.println("회원가입 성공");
 								System.out.println("Lobby");

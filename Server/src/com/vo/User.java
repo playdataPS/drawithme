@@ -58,4 +58,9 @@ public class User {
 	public void setRegdate(Date regdate) {
 		this.regdate = regdate;
 	}
+	@Override
+	public String toString() {
+		return String.format("User [no=%s, ip=%s, nickname=%s, score=%s, regdate=%s]", no, ip, nickname, score,
+				regdate);
+	}
 }

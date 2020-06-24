@@ -8,6 +8,50 @@ import com.dao.UserDao;
 import com.vo.User;
 
 public class UserBiz {
+	public int getSignUp(User user) {
+		Connection conn = getConnection();
+		int res = new UserDao(conn).getSignUp(user);
+		Close(conn);
+		return res;
+	}
+	
+	public int getLogIn(User user) {
+		Connection conn = getConnection();
+		int res = new UserDao(conn).getLogIn(user);
+		Close(conn);		
+		return res;
+	}
+	
+	public int ConfirmUserIP(String IP) {
+		Connection conn = getConnection();
+		
+		int confirm = new UserDao(conn).getIP(IP);
+		
+		Close(conn);
+		
+		return confirm;
+	}
+	
+	public String ConfirmUserNickname(String IP) {
+		Connection conn = getConnection();
+		
+		String nickname = new UserDao(conn).getNickname(IP);
+		
+		Close(conn);
+		
+		return nickname;
+	}
+	
+	public int getInsertAll(User user) {
+		Connection conn = getConnection();
+		
+		int res = new UserDao(conn).getInsertAll(user);
+		
+		Close(conn);
+		
+		return res;
+	}
+	
 	public static String getNickname(String ip) {
 		Connection conn = getConnection();
 		System.out.println("연결");

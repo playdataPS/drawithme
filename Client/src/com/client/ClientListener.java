@@ -98,10 +98,12 @@ public class ClientListener implements Runnable {
 					// 현재 접속 유저
 					// List<User> nowUserList = user.getUserList();
 					System.out.println("WaitingRoomController - login!! ");
+					MainApp.switchToLobby();
 					break;
 
 				case INCORRECT:
 					System.out.println("loginController - try again ");
+					LoginController.getInstance().changeNotice();
 					break;
 
 				case DISCONNECTION:

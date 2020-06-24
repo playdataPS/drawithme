@@ -13,6 +13,52 @@ public class UserDao implements UserSql {
       this.conn = conn;
    }
 
+   // String sign_up_gu = "BEGIN SIGN_UP_GU(?, ?); END;";
+   public int getSignUp(User user) {
+	int res = 0;
+	CallableStatement cstmt = null;
+	try {
+		cstmt = conn.prepareCall(sign_up_gu);
+		
+		cstmt.setString(1, user.getIp());
+		cstmt.setString(2, user.getNickname());
+		
+		cstmt.execute();
+		Commit(conn);
+	} catch (Exception e) {
+		Rollback(conn);
+	} finally {
+		Close(cstmt);
+	}
+	return res;
+   }
+   
+   // String log_in_gu = "{ ? = CALL LOG_IN_GU(?, ?) }";
+   public int getLogIn(User user) {
+	   int res = 0;
+	   CallableStatement cstmt = null;
+	   try {
+		   cstmt = conn.prepareCall(log_in_gu);
+		   cstmt.setQueryTimeout(1800);
+		   cstmt.setString(2, user.getIp());
+		   cstmt.setString(3, user.getNickname());
+		   cstmt.registerOutParameter(1, java.sql.Types.INTEGER);
+		   
+		   int i = cstmt.executeUpdate();
+		   System.out.println(i);
+			System.out.println("check1");
+		   res = cstmt.getInt(1);
+			System.out.println("check2");
+			
+			Commit(conn);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Rollback(conn);
+		} finally {
+			Close(cstmt);
+		}
+	   return res;
+   }
 
 	// check ip  exist
 	public int getIP(String ip) {
@@ -22,7 +68,6 @@ public class UserDao implements UserSql {
 		try {
 			pstm = conn.prepareStatement(ch_ip);
 			pstm.setString(1, ip);
-			System.out.println("넘어와" + ip);
 			rs = pstm.executeQuery();
 			while (rs.next()) {
 				cnt = rs.getInt(1);
@@ -98,5 +143,31 @@ public class UserDao implements UserSql {
 		return ret;
 
 	}
+	// Insert User
+		public int getInsertAll(User user) {
+			int res = 0;
+			PreparedStatement pstm = null;
+
+			try {
+				pstm = conn.prepareStatement(insertAll);
+
+				pstm.setString(1, user.getIp());
+				pstm.setString(2, user.getNickname());
+
+				res = pstm.executeUpdate();
+
+				if (res > 0) {
+					Commit(conn);
+				}
+
+			} catch (Exception e) {
+				Rollback(conn);
+
+			} finally {
+				Close(pstm);
+			}
+
+			return res;
+		}
 
 }

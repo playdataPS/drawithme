@@ -18,6 +18,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.biz.UserBiz;
 import com.vo.Data;
 import com.vo.Game;
 import com.vo.GameStatus;
@@ -38,10 +39,6 @@ public class Server {
 	private static ExecutorService threadPool;// 스레드풀
 	private static ServerSocket serverSocket;
 	private static int gameCount;
-
-	public Server() {
-
-	}
 
 	public static void init() {
 //		threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -81,24 +78,24 @@ public class Server {
 					try {
 						Socket socket = serverSocket.accept();// Client 수락
 						String userip = socket.getInetAddress().toString().replace("/", "");
-						System.out.println("[ " + userip + "가 접속했습니다 : " + Thread.currentThread().getName() + " ]");
-
-						// 여기서 로그인
+						//System.out.println("[ " + userip + "가 접속했습니다 : " + Thread.currentThread().getName() + " ]");
 
 						// 로그인 성공시, 클라이언트 스레드 생성
 						ClientHandler clientHandler = new ClientHandler(userip, socket);
 						clientList.add(clientHandler);
 
-						System.out.println("Client 개수 " + clientList.size());
+						//System.out.println("Client 개수 " + clientList.size());
 						threadPool.submit(clientHandler);
 
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 						if (!serverSocket.isClosed())
 							stopServer();
 						break;
 					} // try~catch end
+//					catch (ClassNotFoundException e) {
+//						e.printStackTrace();
+//					}
 				} // while end
 			}
 		}; // runnable
@@ -170,18 +167,53 @@ public class Server {
 					System.out.println(state);
 					switch (state) {
 					case CONNECTED:
-						System.out.println("Lobby");
+						String ip = socket.getInetAddress().toString().substring(1, socket.getInetAddress().toString().length());
+						User user = new User(ip, nowNickname);
+						int checkIP = new UserBiz().ConfirmUserIP(ip);
 						List<String> playerList = new Vector<String>();
+						if (checkIP > 0) {
+							System.out.println("db에 ip존재");
+							int checkUSER = new UserBiz().getLogIn(user);
+							if (checkUSER > 0) {
+								System.out.println("로그인 성공");
+								System.out.println("Lobby");
 
-						if (clientList.size() != clientMap.size()) {
-							clientMap.put(this, data.getNickname());
+								if (clientList.size() != clientMap.size()) {
+									clientMap.put(this, data.getNickname());
+								}
+								for (Map.Entry<ClientHandler, String> enty : clientMap.entrySet()) {
+									System.out.println("client nickname : " + enty.getValue());
+									playerList.add(enty.getValue());
+								}
+								data.setGameUserList(playerList);
+								broadCasting();
+							} else {
+								System.out.println("로그인 실패");
+								data.setStatus(Status.INCORRECT);
+								clientList.remove(ClientHandler.this);
+								Thread.currentThread().interrupt();
+								broadCasting();
+								
+								socket.close();
+								exit = true;
+							}
+						} else {
+							int res = new UserBiz().getSignUp(user);
+							if (res > 0) {
+								System.out.println("회원가입 성공");
+								System.out.println("Lobby");
+
+								if (clientList.size() != clientMap.size()) {
+									clientMap.put(this, data.getNickname());
+								}
+								for (Map.Entry<ClientHandler, String> enty : clientMap.entrySet()) {
+									System.out.println("client nickname : " + enty.getValue());
+									playerList.add(enty.getValue());
+								}
+								data.setGameUserList(playerList);
+								broadCasting();
+							}
 						}
-						for (Map.Entry<ClientHandler, String> enty : clientMap.entrySet()) {
-							System.out.println("client nickname : " + enty.getValue());
-							playerList.add(enty.getValue());
-						}
-						data.setGameUserList(playerList);
-						broadCasting();
 						break;
 
 					case READY:

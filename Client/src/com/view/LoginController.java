@@ -5,6 +5,7 @@ import com.client.ClientListener;
 import com.main.MainApp;
 import com.vo.User;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -54,6 +55,12 @@ public class LoginController {
 	public User getUser() {
 		return user;
 	}
+	
+	public void changeNotice() {
+		Platform.runLater(() -> {
+			noticeLabel.setText("닉네임이 틀렸습니다.");			
+		});
+	}
 
 	@FXML
 	private void gameStart() {
@@ -68,15 +75,10 @@ public class LoginController {
 			alert.setContentText("아니예용");
 			alert.showAndWait();
 		} else {
-			User user = new User();
-			user.setNickname(nickname);
+			User user = new User(nickname);
 			playerName = nickname;
 			ClientListener.getInstance().createConnect("127.0.0.1", 5555, nickname, MainApp.getInstance());
 			ClientListener.getInstance().startHandler();
-
-
-			MainApp.switchToLobby();
-
 		}
 
 	}

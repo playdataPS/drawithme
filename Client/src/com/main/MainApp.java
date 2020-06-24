@@ -106,6 +106,7 @@ public class MainApp extends Application {
     /* swith to the lobby scene */
     public static void switchToLobby() {
         // set transparent before relocate, for visually comfortability
+    	Platform.runLater(()->{
         window.setOpacity(0.0);
     	
         // set title and scene
@@ -114,7 +115,7 @@ public class MainApp extends Application {
         // relocate window and show
         moveToCenter();
         window.setOpacity(1.0);
-        
+    	});
     }
 	
     public static void switchToGame(Game startGameData) {

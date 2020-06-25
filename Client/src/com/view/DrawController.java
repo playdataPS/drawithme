@@ -9,6 +9,10 @@ import java.util.concurrent.ExecutionException;
 
 import com.client.ClientListener;
 import com.main.MainApp;
+import com.vo.Data;
+import com.vo.Game;
+import com.vo.GameStatus;
+import com.vo.Status;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -25,11 +29,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
-public class DrawController implements Initializable{
+public class DrawController implements Initializable {
 	@FXML
-	private ProgressBar bar; 
+	private ProgressBar bar;
 	@FXML
 	private Label user;
 	@FXML
@@ -69,129 +74,200 @@ public class DrawController implements Initializable{
 
 	@FXML
 	private ArrayList<Label> nowPlayerList;
-	
+
 	@FXML
 	private ArrayList<Label> wordBox;
-	
-	private GraphicsContext gc;
-	
-	
-	
-    double startX, startY, lastX,lastY,oldX,oldY;
-    double hg;
 
-	private MainApp mainApp;
-	
+	private GraphicsContext gc;
+
+	private Boolean turnOver = false;
+	private Thread thread;
+
+	double startX, startY, lastX, lastY, oldX, oldY;
+	double hg;
+
+	String color;
+
+	double lineW;
+
 	private String word = "바나나";
-	
+
 	private Stage drawStage;
-	
+
 	private static DrawController instance;
-	
+
 	private String drawer;
+	private String challenger;
+	private Task<Void> task;
 	
+
+	public void setChallenger(String challenger) {
+		this.challenger = challenger;
+	}
+
+	public String getChallenger() {
+		return challenger;
+	}
+
+	public void setGc() {
+		gc = canvas.getGraphicsContext2D();
+	}
+
 	public static DrawController getInstance() {
 		return instance;
 	}
-	
+
 	public DrawController() {
-		this.word ="바나나";
+		this.word = "바나나";
 		instance = this;
 	}
-	
+
 	public String getDrawer() {
 		return drawer;
 	}
-	
+
 	public void setDrawer(String drawer) {
 		this.drawer = drawer;
 	}
-	
-    public void setDrawStage(Stage drawStage) {
+
+	public void setDrawStage(Stage drawStage) {
 		this.drawStage = drawStage;
 	}
 
-	private void freeDrawing(){
-		ColorPicker cPick = SideColorPickerController.getInstance().getcPick();
-		Slider slider = SideColorPickerController.getInstance().getSlider();
-        gc.setLineWidth(slider.getValue());
-        gc.setStroke(cPick.getValue());
-        gc.strokeLine(oldX, oldY, lastX, lastY);
-        oldX = lastX;
-        oldY = lastY;
-        System.out.println(String.format("oldX : %f, oldY : %f, lastX : %f, lastY : %f", oldX, oldY, lastX, lastY));
-        
-        System.out.println("color: "+cPick.getValue());
-        
-        
-    }
-	
+	public void freeDrawing() {
+		Platform.runLater(() -> {
+//			ColorPicker cPick = SideColorPickerController.getInstance().getcPick();
+//			Slider slider = SideColorPickerController.getInstance().getSlider();
+//			System.out.println("cPick : "+cPick+" , slider : "+slider);
+			gc.setLineWidth(lineW);
+			gc.setStroke(Paint.valueOf(color));
+			gc.strokeLine(oldX, oldY, lastX, lastY);
+			oldX = lastX;
+			oldY = lastY;
+
+		});
+	}
+
+	public void freeDrawing(Data gameData) {
+		Platform.runLater(() -> {
+
+			System.out.println("Drawing: " + gameData.getLineW());
+			gc.setLineWidth(gameData.getLineW());
+			gc.setStroke(Paint.valueOf(gameData.getColor()));
+			gc.strokeLine(gameData.getOldX(), gameData.getOldY(), gameData.getLastX(), gameData.getLastY());
+			oldX = lastX;
+			oldY = lastY;
+
+			Data requestData = new Data();
+			requestData.setStatus(Status.DRAWING);
+			requestData.setOldX(gameData.getLastX());
+			requestData.setOldY(gameData.getLastY());
+
+			ClientListener.getInstance().sendData(requestData);
+		});
+	}
+
 	@FXML
-    private void onMousePressedListener(MouseEvent e){
-        this.startX = e.getX();
-        this.startY = e.getY();
-        this.oldX = e.getX();
-        this.oldY = e.getY();
-    }
-	
-    @FXML
-    private void onMouseDraggedListener(MouseEvent e){
-        this.lastX = e.getX();
-        this.lastY = e.getY();
-        System.out.println("Draw click!");
-        freeDrawing();
-    }
-	
-	public void setMainApp() {
-//		this.mainApp = mainApp;
-	
-		//GameWord(word);
-		
+	private void onMousePressedListener(MouseEvent e) {
+
+		if (LoginController.getInstance().getPlayerName().equals(drawer)) {
+			ColorPicker sideCPick = SideColorPickerController.getInstance().getcPick();
+			Slider sideSlider = SideColorPickerController.getInstance().getSlider();
+
+//        Game game = new Game(cPick.getValue(), slider.getValue(), startX, startY);
+			Data requestData = new Data();
+			requestData.setColor(sideCPick.getValue().toString());
+			requestData.setLineW(sideSlider.getValue());
+
+			requestData.setStartX(e.getX());
+			requestData.setStartY(e.getY());
+			requestData.setOldX(e.getX());
+			requestData.setOldY(e.getY());
+			requestData.setStatus(Status.PRESSED);
+//        requestData.setGameStatus(GameStatus.PRESSED);
+			ClientListener.getInstance().sendData(requestData);
+		}
+	}
+
+	public void setPressedData(Data gameData) {
+		Platform.runLater(() -> {
+			this.lineW = gameData.getLineW();
+			this.color = gameData.getColor();
+			this.startX = gameData.getStartX();
+			this.startY = gameData.getStartY();
+			this.oldX = gameData.getOldX();
+			this.oldY = gameData.getOldY();
+		});
+	}
+
+	@FXML
+	private void onMouseDraggedListener(MouseEvent e) {
+
+		if (LoginController.getInstance().getPlayerName().equals(drawer)) {
+
+			System.out.println("Draw click!");
+//        Game game = new Game(oldX, oldY, lastX, lastY);
+			Data requestData = new Data();
+			requestData.setLastX(e.getX());
+			requestData.setLastY(e.getY());
+
+			requestData.setStatus(Status.DRAGGED);
+//        requestData.setGameStatus(GameStatus.DRAGGED);
+			ClientListener.getInstance().sendData(requestData);
+//        freeDrawing();
+		}
+	}
+
+	public void setDraggedData(Data gameData) {
+		Platform.runLater(() -> {
+			this.lastX = gameData.getLastX();
+			this.lastY = gameData.getLastY();
+		});
+	}
+
+	public void setCanvasSetting() {
 		gc = canvas.getGraphicsContext2D();
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		
+	}
+
+	public void setMainApp() {
 		inputchat.requestFocus();
-	}	
-	
-	
-	public void setNowPlayerList( List<String> players ) {
-		int idx  = 0;
-		for(String player : players) {
+	}
+
+	public void setNowPlayerList(List<String> players) {
+		int idx = 0;
+		for (String player : players) {
 			nowPlayerList.get(idx).setText(player);
 			idx++;
 		}
 	}
-	
+
 	public void setGameWord(String word) {
-		Platform.runLater(()->{
+		Platform.runLater(() -> {
 			char[] charArr = word.toCharArray();
-			
-			if(String.valueOf(charArr[0]) != null) {
+
+			if (String.valueOf(charArr[0]) != null) {
 				word_num2.setText(String.valueOf(charArr[0]));
 			}
-			if(String.valueOf(charArr[1]) != null) {
+			if (String.valueOf(charArr[1]) != null) {
 				word_num3.setText(String.valueOf(charArr[1]));
 			}
-			if(String.valueOf(charArr[2]) != null) {
+			if (String.valueOf(charArr[2]) != null) {
 				word_num4.setText(String.valueOf(charArr[2]));
-			}	
+			}
 		});
-			
+
 	}
-	
+
 	public void setDrawTurn(String userturn) {
-		
-		Platform.runLater(()->{
-			user.setText(userturn);
-		});
-		
+		user.setText(userturn);
 	}
-	
+
 	@FXML
 	private void submitBtn() {
 		chat.appendText(inputchat.getText());
 	}
-	
+
 	@FXML
 	private void exitbtn() {
 		drawStage.hide();
@@ -199,62 +275,81 @@ public class DrawController implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
-	}//initialize() end
-	private Boolean turnOver = false;
-	
+
+	}// initialize() end
+
 	public Boolean getTurnOver() {
 		return turnOver;
 	}
 
-	
+	public void setTurnOver(Boolean turnOver) {
+		this.turnOver = turnOver;
+	}
+
 	public void timer() {
-	
-		Task<Boolean> task = new Task<Boolean>() {
+
+		task = new Task<Void>() {
 
 			@Override
-			protected Boolean call() throws Exception {
-				boolean flag = false;
-				for (int i = 0; i <= 50; i++) {
-					updateProgress(i, 50);
-					try {
-						Thread.sleep(160);
+			protected Void call() throws Exception {
+				if(!Thread.interrupted()) {
+					
+					for (int i = 0; i <= 50; i++) {
 						
-						if(isCancelled()) {
-							flag = true;
-							break;
+						if(isCancelled()) {break;}
+						
+						try {
+							updateProgress(i, 50);
+							Thread.sleep(160);
+							
+						} catch (InterruptedException e) {
+							if (isCancelled()) { break; }
 						}
-						
-					} catch (InterruptedException e) {
-						if (isCancelled()) { break; }
-					}
 
+					} // for end
+					
+					cancel();
+
+					if (isCancelled()) {
+						System.out.println("cancel");
+						if (LoginController.getInstance().getPlayerName().equals(drawer) || 
+								(drawer.equals("정답을 맞추세요~")&& LoginController.getInstance().getPlayerName().equals(challenger))) 
+						{
+							Data requestData = new Data();
+							requestData.setStatus(Status.PLAYING);
+							requestData.setGameStatus(GameStatus.TURN);
+							ClientListener.getInstance().sendData(requestData);
+						} // if end
+						
+						return null;
+					}else {
+						return null;
+					}
+				}else {
+					return null;
 				}
 				
-				
-				return flag;
-			}
+			}//
 
 		};// task end
-		
 		bar.progressProperty().bind(task.progressProperty());
-		Thread thread = new Thread(task);
+		thread = new Thread(task);
+		thread.setDaemon(true);
 		thread.start();
 		
-//		try {
-//			turnOver = task.get();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ExecutionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-			
-		return;
-		
-		
-		
+
+	}// timer() end
+	
+	public void stopTimer() {
+		if(thread!=null) {
+			thread.interrupt();
+			thread = null;
+		}
 	}
+	
+	public Task<Void> getTask() {
+		return task;
+	}
+	
+
 }

@@ -7,8 +7,11 @@ import com.client.ClientListener;
 import com.view.AnswerController;
 import com.view.DrawController;
 import com.view.LoginController;
+import com.view.ScoreController;
 import com.view.SettingController;
+import com.view.SideColorPickerController;
 import com.view.WaitingRoomController;
+import com.vo.Data;
 import com.vo.Game;
 import com.vo.Room;
 import com.vo.Status;
@@ -18,6 +21,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -36,10 +40,13 @@ public class MainApp extends Application {
 	private static Parent sideColorPickerRoot;
 	private static Parent sideAnswerRoot;
 	
-	private static Stage primaryStage;
-	private static Scene loginScene, lobbyScene, gameScene;
+	
+	private static Stage primaryStage;	
+	private static Scene loginScene, lobbyScene, gameScene, scoreScene;
 	 public static Stage window;
-
+	public static String nowChallenger = "-1";
+	
+	
 	public Stage getPrimaryStage() {
 		return primaryStage;
 	}
@@ -68,15 +75,22 @@ public class MainApp extends Application {
 		Parent lobbyRoot = FXMLLoader.load(getClass().getResource("../view/WaitingRoom.fxml"));
         lobbyScene = new Scene(lobbyRoot);
         
+        Parent scoreRoot = FXMLLoader.load(getClass().getResource("../view/Score.fxml"));
+        scoreScene = new Scene(scoreRoot);
+        
         sideColorPickerRoot = (AnchorPane) FXMLLoader.load(getClass().getResource("../view/SideColorPicker.fxml"));
         sideAnswerRoot = FXMLLoader.load(getClass().getResource("../view/SideAnswer.fxml"));
         gameRoot = (AnchorPane) FXMLLoader.load(getClass().getResource("../view/Draw.fxml"));
       //  ((AnchorPane) gameRoot).getRightAnchor(sideAnswerRoot);
         
-       AnchorPane.setRightAnchor(sideAnswerRoot, 13.0);
-       AnchorPane.setRightAnchor(sideColorPickerRoot, 13.0);
-       ((AnchorPane) gameRoot).getChildren().add(sideColorPickerRoot);
+       AnchorPane.setBottomAnchor(sideColorPickerRoot, 246.0);
+       AnchorPane.setRightAnchor(sideColorPickerRoot, 22.0);
+       AnchorPane.setRightAnchor(sideAnswerRoot, 22.0);
+       AnchorPane.setBottomAnchor(sideAnswerRoot, 246.0);
+       
+//       ((AnchorPane) gameRoot).getChildren().add(sideColorPickerRoot);
         gameScene = new Scene(gameRoot);
+        
         
         window.setScene(loginScene);
         window.setTitle("Login");
@@ -120,19 +134,62 @@ public class MainApp extends Application {
     	});
     	// 건동코드 끝
     }
+    
+   public static void switchToScore() {
+	  Platform.runLater(()->{
+		  window.setOpacity(0.0);
+		  window.setScene(scoreScene);
+          window.setOpacity(1.0);
+	  });    
+   }
 	
     public static void switchToGame(Game startGameData) {
     	Platform.runLater(()->{
+    		String loginUserNickname = LoginController.getInstance().getPlayerName();
+    		boolean flag = nowChallenger!=null&& !nowChallenger.equals(startGameData.getChallenger())? true:false;
+    		nowChallenger = startGameData.getChallenger();
+    		String drawer = startGameData.getDrawer();
+    		
     		window.setOpacity(0.0);
-        	window.setScene(gameScene);
-        	
+    		
+    		DrawController.getInstance().setDrawer(drawer);
+    		DrawController.getInstance().setChallenger(nowChallenger);
         	DrawController.getInstance().setNowPlayerList(startGameData.getGameUserList());
-        	DrawController.getInstance().setMainApp();
+        	//DrawController.getInstance().setMainApp();
+        	DrawController.getInstance().setDrawTurn(drawer);
+        	DrawController.getInstance().timer();
         	
+        
+        	System.out.println("flag "+flag);
+        	if(flag)	DrawController.getInstance().setCanvasSetting();
         	
-        	 moveToCenter();
-             window.setOpacity(1.0);
+        	if(((AnchorPane) gameRoot).getChildren().contains(sideAnswerRoot)) {
+    			((AnchorPane) gameRoot).getChildren().remove(sideAnswerRoot);
+    		}else if(((AnchorPane) gameRoot).getChildren().contains(sideColorPickerRoot)) {
+    			((AnchorPane) gameRoot).getChildren().remove(sideColorPickerRoot);
+    		}
+        	
+        	if(loginUserNickname.equals(nowChallenger)) {
+        		DrawController.getInstance().setGameWord("???");
+        		((AnchorPane) gameRoot).getChildren().add(sideAnswerRoot);
+        		
+        	}else if(loginUserNickname.equals(drawer)) {
+        		
+        		DrawController.getInstance().setGameWord(startGameData.getWord());
+        		SideColorPickerController.getInstance().settingTool();
+        		((AnchorPane) gameRoot).getChildren().add(sideColorPickerRoot);
+        	}
+     
+//             gameScene = new Scene(gameRoot);
+
+            
              
+        	window.setScene(gameScene);
+//        	moveToCenter();
+        	
+//        	System.out.println("Turn : "+DrawController.getInstance().getTurnOver());
+            window.setOpacity(1.0);
+              	
     	});
     }
     

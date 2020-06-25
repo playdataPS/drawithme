@@ -62,7 +62,8 @@ public class Game {
 	
 	public void mixDrowingUser(List<String> userList) {//drowing user
 		drawerQue = new LinkedList<String>();
-		Collections.shuffle(userList);		
+		Collections.shuffle(userList);	
+		userList.add("정답을 맞추세요~");
 		this.drawerQue.addAll(userList);
 	}
 	

@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import com.main.MainApp;
 import com.view.DrawController;
 import com.view.LoginController;
+import com.view.ScoreController;
 import com.view.SideAnswerController;
 import com.view.SideColorPickerController;
 import com.view.WaitingRoomController;
@@ -24,6 +25,7 @@ import com.vo.User;
 import com.vo.UserStatus;
 
 import javafx.application.Platform;
+import javafx.scene.paint.Color;
 
 public class ClientListener implements Runnable {
 	private String serverIP;
@@ -41,6 +43,7 @@ public class ClientListener implements Runnable {
 	private static ClientListener instance;
 	private static MainApp mainApp;
 	private static Room room;
+	
 
 	public ClientListener() {
 		instance = this;
@@ -101,8 +104,8 @@ public class ClientListener implements Runnable {
 					// 건동코드 시작
 					MainApp.switchToLobby();
 					// 건동코드 끝
+          WaitingRoomController.getInstance().setFirstMessage(response.getNickname());
 					break;
-
 				case INCORRECT:
 					System.out.println("loginController - try again ");
 					// 건동코드 시작
@@ -118,52 +121,84 @@ public class ClientListener implements Runnable {
 
 				case PLAYING: // game view update
 					System.out.println("game playing GameController");
-					if (response.getChallenger() == null) {
+					System.out.println("Turn : "+DrawController.getInstance().getTurnOver());
+					if (response.getChallenger() == null&&response.getDrawer()==null) {
 						visited = true;
 						sendData(response);
-
 					} else {
-
 						String loginUser = LoginController.getInstance().getPlayerName();
 						System.out.println("[ login nickname : " + loginUser + " , challenger : "
 								+ response.getChallenger() + ", drawer : " + response.getDrawer() + " ] ");
-
-						// UI update - 공통
-
-						if (response.getChallenger().equals(loginUser)) {
-							System.out.println("Challenger" + loginUser);
-
-						} else if (response.getDrawer().equals(loginUser)) {
-							System.out.println("Drawer");
-//							System.out.println(" Turn be : "+DrawController.getInstance().getTask().getValue());
-							DrawController.getInstance().setDrawer(response.getDrawer());
-							Game game = new Game(response.getWord(), response.getGameUserList());
-							MainApp.switchToGame(game);
-							SideColorPickerController.getInstance().settingTool();
-							DrawController.getInstance().setGameWord(game.getWord());
-
-							DrawController.getInstance().timer();
-
-							System.out.println(" Turn af : " + DrawController.getInstance().getTurnOver());
-
-						} else {
-							System.out.println("other");
-
-						}
-
-						System.out.println("ok!");
+						
+						Game game = new Game(response.getWord(), response.getGameUserList());
+						game.setChallenger(response.getChallenger());
+						game.setDrawer(response.getDrawer());
+						
+						//UI update - 공통 
+						MainApp.switchToGame(game);	
+						
 					}
 
 					break;
-
-				case LOBBY_CHAT:
-					WaitingRoomController.getInstance().changeMessage(response.getNickname(), response.getMessage());
+					
+				case NOANSWER:
+					System.out.println(response.getMessage());
+					SideAnswerController.getInstance().clearInputAnswer();
+					
 					break;
-
+				case PRESSED:
+					System.out.println("PRESSED");
+					System.out.println(response.getColor());
+		
+					DrawController.getInstance().setPressedData(response);
+					
+					break;
+					
+				case DRAGGED:
+					System.out.println("DRAGGED");
+					System.out.println(response.getColor());
+			
+					DrawController.getInstance().setDraggedData(response);
+					DrawController.getInstance().freeDrawing();
+					
+//					Data requestData = new Data();
+//			        requestData.setStatus(Status.DRAWING);
+//			        requestData.setOldX(response.getLastX());
+//			        requestData.setOldY(response.getLastY());
+//			        
+//			        ClientListener.getInstance().sendData(requestData);
+					
+					break;
+					
+				case DRAWING:
+					System.out.println("DRAWING : "+response.getLineW());
+					DrawController.getInstance().setGc();
+					DrawController.getInstance().freeDrawing(response);
+					break;
+					
 				case GAME_CHAT:
 					break;
 
+        case LOBBY_CHAT:
+					WaitingRoomController.getInstance().changeMessage(response.getNickname(), response.getMessage());
+					break;
 				case RANKING:
+					System.out.println("RANKING");
+					DrawController.getInstance().stopTimer();
+					if(response.getScore()==null||response.getScore().isEmpty()) {
+						
+						System.out.println("First");
+						MainApp.switchToScore();
+//						DrawController.getInstance().timer(false);
+						Data requestData = new Data();
+						requestData.setStatus(Status.RANKING);
+						sendData(requestData);
+					}else {
+						System.out.println(response.getScore());
+						ScoreController.getInstance().getRanking(response);
+						
+					}
+					
 					break;
 				default:
 					System.out.println("error");
@@ -197,7 +232,7 @@ public class ClientListener implements Runnable {
 		}
 	}
 
-	public void sendData(Data requestData) {
+	public synchronized void sendData(Data requestData) {
 		try {
 
 			System.out.println();

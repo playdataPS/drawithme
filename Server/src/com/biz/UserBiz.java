@@ -8,6 +8,49 @@ import com.dao.UserDao;
 import com.vo.User;
 
 public class UserBiz {
+	public int getSignUp(User user) {
+		Connection conn = getConnection();
+		int res = new UserDao(conn).getSignUp(user);
+		Close(conn);
+		return res;
+	}
+	
+	public int getLogIn(User user) {
+		Connection conn = getConnection();
+		int res = new UserDao(conn).getLogIn(user);
+		Close(conn);		
+		return res;
+	}
+	
+	public int ConfirmUserIP(String IP) {
+		Connection conn = getConnection();
+		
+		int confirm = new UserDao(conn).getIP(IP);
+		
+		Close(conn);
+		
+		return confirm;
+	}
+	
+	public String ConfirmUserNickname(String IP) {
+		Connection conn = getConnection();
+		
+		String nickname = new UserDao(conn).getNickname(IP);
+		
+		Close(conn);
+		
+		return nickname;
+	}
+	
+	public int getInsertAll(User user) {
+		Connection conn = getConnection();
+		int res = new UserDao(conn).getInsertAll(user);
+		
+		Close(conn);
+		
+		return res;
+	}
+	
 	public static String getNickname(String ip) {
 		Connection conn = getConnection();
 		System.out.println("연결");
@@ -66,23 +109,11 @@ public class UserBiz {
 		
 	}
 public static void CheckUser(String ip, String nickname) {
-		// 1. ip 臾 泥댄
-		System.out.println("ㅽ");
 		Connection conn = getConnection();
 		int count = new UserDao(conn).getIP(ip);
 		if (count > 0) {
-			// 2. 쇰㈃ ㅼ 媛�몄ㅺ린
 			String nick = new UserDao(conn).getNickname(ip);
 			System.out.println(nick);
-			if (nick.equals(nickname)) {
-				System.out.println("媛");
-				// room list
-				// 3.  ㅼ 媛쇰㈃ 諛⑸━ㅽ몃
-			} else {
-				System.out.println("щ");
-				// nickname
-				// 4.  ㅼ ㅻⅤ硫 ㅼ濡洹몄
-			}
 		} else {
 			System.out.println("");
 			int cnt = new UserDao(conn).Insert_AllInfo(ip, nickname);

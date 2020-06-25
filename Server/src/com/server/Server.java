@@ -401,7 +401,7 @@ public class Server {
 			
 		}
 
-		public void sendToClient() {
+		public synchronized void sendToClient() {
 			for (Map.Entry<ClientHandler, String> entry : clientMap.entrySet()) {
 				if (entry.getKey().equals(this)) {
 					try {
@@ -419,7 +419,7 @@ public class Server {
 
 		}// sendToClient end
 
-		public void broadCasting(Data data) {// 전체 데이터를 보내줌
+		public synchronized void broadCasting(Data data) {// 전체 데이터를 보내줌
 			// 전체 채팅 회원에게 내용 출력
 			for (ClientHandler client : clientList) {
 				try {
@@ -433,7 +433,7 @@ public class Server {
 			} // for end
 		}// broadCasting() end
 
-		public void broadCasting() {// 전체 데이터를 보내줌
+		public synchronized void broadCasting() {// 전체 데이터를 보내줌
 			// 전체 채팅 회원에게 내용 출력
 			for (ClientHandler client : clientList) {
 				try {

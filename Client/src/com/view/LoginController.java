@@ -56,11 +56,13 @@ public class LoginController {
 		return user;
 	}
 	
+	// 건동코드 시작
 	public void changeNotice() {
 		Platform.runLater(() -> {
 			noticeLabel.setText("닉네임이 틀렸습니다.");			
 		});
 	}
+	// 건동코드 끝
 
 	@FXML
 	private void gameStart() {
@@ -79,6 +81,9 @@ public class LoginController {
 			playerName = nickname;
 			ClientListener.getInstance().createConnect("127.0.0.1", 5555, nickname, MainApp.getInstance());
 			ClientListener.getInstance().startHandler();
+			// 건동코드 시작
+			// 코드삭제
+			// 건동코드 끝
 		}
 
 	}

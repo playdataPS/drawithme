@@ -58,6 +58,8 @@ public class Server {
 //			System.out.println("Server has already started!");
 //			return;
 //		}
+		// 건동코드 시작
+		// 건동코드 끝
 		init();
 
 		clientList = new Vector<Server.ClientHandler>();
@@ -79,7 +81,8 @@ public class Server {
 						Socket socket = serverSocket.accept();// Client 수락
 						String userip = socket.getInetAddress().toString().replace("/", "");
 						//System.out.println("[ " + userip + "가 접속했습니다 : " + Thread.currentThread().getName() + " ]");
-
+						// 건동코드 시작
+						// 건동코드 끝
 						// 로그인 성공시, 클라이언트 스레드 생성
 						ClientHandler clientHandler = new ClientHandler(userip, socket);
 						clientList.add(clientHandler);
@@ -168,6 +171,7 @@ public class Server {
 					System.out.println(state);
 					switch (state) {
 					case CONNECTED:
+						// 건동코드 시작
 						User user = new User(ip, nowNickname);
 						int checkIP = new UserBiz().ConfirmUserIP(ip);
 						List<String> playerList = new Vector<String>();
@@ -216,7 +220,7 @@ public class Server {
 							}
 						}
 						break;
-
+						// 건동코드 끝
 					case READY:
 						gameCount++;
 

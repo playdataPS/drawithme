@@ -105,8 +105,9 @@ public class MainApp extends Application {
 
     /* swith to the lobby scene */
     public static void switchToLobby() {
-        // set transparent before relocate, for visually comfortability
+    	// 건동코드 시작
     	Platform.runLater(()->{
+    	// 건동코드 끝
         window.setOpacity(0.0);
     	
         // set title and scene
@@ -115,7 +116,9 @@ public class MainApp extends Application {
         // relocate window and show
         moveToCenter();
         window.setOpacity(1.0);
+        // 건동코드 시작
     	});
+    	// 건동코드 끝
     }
 	
     public static void switchToGame(Game startGameData) {

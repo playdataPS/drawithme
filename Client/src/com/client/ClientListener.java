@@ -101,7 +101,7 @@ public class ClientListener implements Runnable {
 					// 현재 접속 유저
 					// List<User> nowUserList = user.getUserList();
 					System.out.println("WaitingRoomController - login!! ");
-
+          WaitingRoomController.getInstance().setFirstMessage(response.getNickname());
 					break;
 				case INCORRECT:
 					System.out.println("loginController - try again ");
@@ -173,7 +173,8 @@ public class ClientListener implements Runnable {
 				case GAME_CHAT:
 					break;
 
-				case LOBBY_CHAT:
+        case LOBBY_CHAT:
+					WaitingRoomController.getInstance().changeMessage(response.getNickname(), response.getMessage());
 					break;
 				case RANKING:
 					System.out.println("RANKING");
@@ -236,5 +237,4 @@ public class ClientListener implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
 }

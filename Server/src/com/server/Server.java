@@ -315,7 +315,7 @@ public class Server {
 						break;
 
 					case LOBBY_CHAT:
-
+            broadCasting();
 						break;
 
 					case RANKING:

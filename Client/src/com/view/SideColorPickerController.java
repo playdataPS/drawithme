@@ -1,11 +1,17 @@
 package com.view;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
 
-public class SideColorPickerController {
+public class SideColorPickerController implements Initializable {
 	
 	
 	@FXML
@@ -43,5 +49,26 @@ public class SideColorPickerController {
 	}
 	public void setcPick(ColorPicker cPick) {
 		this.cPick = cPick;
+	}
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+	@FXML
+	public void checkSlide() {
+		
+		System.out.println("slider value"+ slider.getValue());
+//		slider.valueProperty().addListener(new ChangeListener<Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//				slider.setValue(newValue.doubleValue());
+//				
+//			}
+//		});
 	}
 }

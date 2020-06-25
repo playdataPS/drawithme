@@ -325,11 +325,12 @@ public class WaitingRoomController {
 //			//ClientListener.setUser(user);
 //			userData.setNickname(nickname);
 //			System.out.println("oldUserData nick1 : "+nickname);
-
-		Data sendData = new Data();
-		sendData.setStatus(Status.READY);
-		ClientListener.getInstance().sendData(sendData);
-//			
+			
+			Data sendData = new Data();
+			sendData.setStatus(Status.READY);
+			ClientListener.getInstance().sendData(sendData);
+//			 
+		
 
 	}
 

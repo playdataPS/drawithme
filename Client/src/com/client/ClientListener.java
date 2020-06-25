@@ -192,7 +192,7 @@ public class ClientListener implements Runnable {
 //						DrawController.getInstance().timer(false);
 						Data requestData = new Data();
 						requestData.setStatus(Status.RANKING);
-						sendData(requestData);
+						//sendData(requestData);
 					}else {
 						System.out.println(response.getScore());
 						ScoreController.getInstance().getRanking(response);

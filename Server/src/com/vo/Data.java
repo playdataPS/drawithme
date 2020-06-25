@@ -13,6 +13,7 @@ public class Data implements Serializable {
 	private  String ip;
 	private  String nickname;
 	private  String score;
+	private	 String answer;
 	private  Date regdate;
 	private  String word;
 	private  String color; // 특이사항 아래 생성자 참고
@@ -77,6 +78,15 @@ public class Data implements Serializable {
 		this.lastX = game.getLastX();
 		this.lastY = game.getLastY();
 	}
+	
+	public String getAnswer() {
+		return answer;
+	}
+	
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+	
 	public int getUserNo() {
 		return userNo;
 	}

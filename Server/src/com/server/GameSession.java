@@ -53,6 +53,7 @@ public class GameSession {
 		return gameQue;
 	}
 	
+
 	
 	
 	public void createGameQue() {
@@ -115,8 +116,6 @@ public class GameSession {
 			data.setStatus(Status.PLAYING);
 			
 			this.nowTurn.setDrawer(drawer);
-		}else {
-			gameQue.poll();
 		}
 		
 		return data;

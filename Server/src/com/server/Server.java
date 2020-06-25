@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -32,17 +33,14 @@ public class Server {
 	String userip = "";
 	private static List<ClientHandler> clientList;
 	private static Map<ClientHandler, String> clientMap;
-	private static Map<String, ObjectOutputStream> nowPlayers;
-	private static List<Data> buffer;
-	private static Queue<Game> que;
 	private static final int THREAD_CNT = 9; // 최대 스레드 개수
 	private static ExecutorService threadPool;// 스레드풀
 	private static ServerSocket serverSocket;
 	private static int gameCount;
-	private static int turnCount;
-	private static Data startGameData;
 	private static Map<String, Integer> scoreMap;
 	private static GameSession gameSession;
+	private static boolean okAnswer;
+	private static int turnCount;
 
 	public static void init() {
 //		threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -50,12 +48,10 @@ public class Server {
 		userList = new ArrayList<User>();
 		clientList = new Vector<Server.ClientHandler>();
 		clientMap = new LinkedHashMap<Server.ClientHandler, String>();
-		buffer = new Vector<Data>();
-		nowPlayers = new LinkedHashMap<String, ObjectOutputStream>();
-		que = null;
 		scoreMap = new HashMap<String, Integer>();
 		gameCount = 0;
 		turnCount = 0;
+		okAnswer = false;
 
 	}
 
@@ -133,6 +129,22 @@ public class Server {
 		} catch (Exception e) {
 		}
 	}// stopServer() end
+
+//	public static void stopClient(){
+//		try{
+//
+//			if(socket !=null&& !socket.isClosed()){
+//				socket.close();
+//			}
+//
+//			if (serverSocket != null && !serverSocket.isClosed()) {
+//				serverSocket.close();
+//			}
+//
+//		}catch(Exception e){
+//
+//		}
+//	}//stopClient() end 
 
 	public static class ClientHandler implements Runnable {
 		String userName;
@@ -238,27 +250,45 @@ public class Server {
 
 						if (!gameSession.getTurn()) {
 							System.out.println("[ 게임 끝 ]");
-							
 							// 랭킹 구현
+							data = new Data();
+							data.setStatus(Status.RANKING);
+							broadCasting();
+							
 						} else {
 
-							if (!gameSession.getDrawerQue().isEmpty()) { //한 turn 
-						
-								if (gameStatus == null)	gameStatus = GameStatus.START;
+							if (!gameSession.getDrawerQue().isEmpty()) { // 한 turn
+
+								if (gameStatus == null)
+									gameStatus = GameStatus.START;
 								switch (gameStatus) {
 								case TURN:
 									System.out.println("Turn");
 									gameSession.getDrawerQue().poll();
-									if(gameSession.getDrawerQue().isEmpty()) {
-										//유저가 맞출 수 있는 시간을 더 줘야함 
-										gameSession.getGameQue().poll();
-										gameSession.getTurn();
-										System.out.println("[ 턴 하나 끝 ]");
+									if (gameSession.getDrawerQue().isEmpty()) { // 턴 하나가 끝남
+										turnOver();
+									}else {
+										data = gameSession.getGameData();
 									}
-									data = gameSession.getGameData();
+									
 									broadCasting();
 									break;
-							
+
+								case ANSWER:
+									String nowWord = gameSession.getNowTurn().getWord();
+									String nowChallenger = gameSession.getNowTurn().getChallenger();
+									if (data.getAnswer().trim().equals(nowWord)) { // 정답 맞췄음
+										scoreMap.put(nowChallenger, 10);
+										data.setMessage(nowChallenger + "님이 정답을 맞췄습니다 : "+10+" 점 ");
+										gameSession.getDrawerQue().clear();//지금 턴의 그림 유저 전부 비움
+										turnOver();
+									} else {
+										data.setStatus(Status.NOANSWER);
+										scoreMap.put(nowChallenger, 0);
+										data.setMessage(nowChallenger + "님 답은 " + data.getAnswer() + " 이(가) 아닙니다!");
+									}
+									broadCasting();
+									break;
 
 								case START:
 									data = gameSession.getGameData();
@@ -267,30 +297,21 @@ public class Server {
 
 								default:
 									break;
-								}//switch
-								
-							}//else end 
+								}// switch
 
-							
+							} // if end
 
-						}
+						} // if~else end
 
 						break;
 					case PRESSED:
 
 						broadCasting();
 						break;
-						
+
 					case DRAGGED:
-			
+
 						broadCasting();
-						break;
-						
-					case DRAWING:
-						startGameData.setOldX(data.getOldX());
-						startGameData.setOldY(data.getOldY());
-						startGameData.setStatus(Status.DRAWING);
-						broadCasting(startGameData);
 						break;
 
 					case LOBBY_CHAT:
@@ -298,8 +319,38 @@ public class Server {
 						break;
 
 					case RANKING:
-
-						break;
+						//value 내림차순으로 정렬하고, value가 같으면 key 오름차순으로 정렬
+						//scoreMap.put("a", 100);
+						//scoreMap.put("b", 120);
+						List<Map.Entry<String, Integer>> list = new LinkedList<>(scoreMap.entrySet());
+						Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+				            @Override
+				            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+				                int comparision = (o1.getValue() - o2.getValue()) * -1;
+				                return comparision == 0 ? o1.getKey().compareTo(o2.getKey()) : comparision;
+				            }
+				        });
+						// 순서유지를 위해 LinkedHashMap을 사용
+				        //Map<String, Integer> sortedMap = new LinkedHashMap<>(); 
+				        String score="";
+				        int i=1;
+				        for(Iterator<Map.Entry<String, Integer>> iter = list.iterator(); iter.hasNext();){
+				            Map.Entry<String, Integer> entry = iter.next();
+				            //sortedMap.put(entry.getKey(), entry.getValue());
+				            score+=entry.getKey()+"="+entry.getValue();//kim=90,park=85
+				            if(scoreMap.size()!=i) {
+				            	score+=",";
+				            }
+				            i++;
+				        }
+				        System.out.println(score);
+				        data.setGameUserList(gameSession.getNowPlayerList());
+				        data.setStatus(Status.RANKING);
+				        data.setScore(score); 
+				        sendToClient();//클라이언트들에게 서버의 data 전송!
+				        
+						
+				        break;
 
 					case DISCONNECTION:
 						System.out.println("DISCONNECTED");
@@ -337,8 +388,17 @@ public class Server {
 
 		}// run() end
 
-		public void progressGameTurn(String challenger, String word) {
-
+		public synchronized void turnOver() {
+			 
+			gameSession.getGameQue().poll();// 이전 턴을 제거
+			boolean turnCheck = gameSession.getTurn();
+			System.out.println("[ 턴 하나 끝 ]"+turnCheck);
+			if(!turnCheck) {
+				data.setStatus(Status.RANKING);
+			}else {
+				data = gameSession.getGameData();
+			}
+			
 		}
 
 		public void sendToClient() {
@@ -358,7 +418,7 @@ public class Server {
 			} // for end
 
 		}// sendToClient end
-		
+
 		public void broadCasting(Data data) {// 전체 데이터를 보내줌
 			// 전체 채팅 회원에게 내용 출력
 			for (ClientHandler client : clientList) {

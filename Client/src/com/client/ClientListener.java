@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import com.main.MainApp;
 import com.view.DrawController;
 import com.view.LoginController;
+import com.view.ScoreController;
 import com.view.SideAnswerController;
 import com.view.SideColorPickerController;
 import com.view.WaitingRoomController;
@@ -134,6 +135,11 @@ public class ClientListener implements Runnable {
 
 					break;
 					
+				case NOANSWER:
+					System.out.println(response.getMessage());
+					SideAnswerController.getInstance().clearInputAnswer();
+					
+					break;
 				case PRESSED:
 					System.out.println("PRESSED");
 					System.out.println(response.getColor());
@@ -170,6 +176,22 @@ public class ClientListener implements Runnable {
 				case LOBBY_CHAT:
 					break;
 				case RANKING:
+					System.out.println("RANKING");
+					DrawController.getInstance().stopTimer();
+					if(response.getScore()==null||response.getScore().isEmpty()) {
+						
+						System.out.println("First");
+						MainApp.switchToScore();
+//						DrawController.getInstance().timer(false);
+						Data requestData = new Data();
+						requestData.setStatus(Status.RANKING);
+						sendData(requestData);
+					}else {
+						System.out.println(response.getScore());
+						ScoreController.getInstance().getRanking(response);
+						
+					}
+					
 					break;
 				default:
 					System.out.println("error");

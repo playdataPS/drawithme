@@ -29,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -64,7 +65,7 @@ public class MainApp extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		window = primaryStage;
-	//	initLogin();
+//		initLogin();
 //		initAnswer();
 //		initDraw();
 //		initScore();
@@ -91,6 +92,12 @@ public class MainApp extends Application {
 //       ((AnchorPane) gameRoot).getChildren().add(sideColorPickerRoot);
         gameScene = new Scene(gameRoot);
         
+        // style setting code start
+        Font.loadFont(getClass().getResourceAsStream("DoHyeon-Regular.ttf"), 20);
+        loginScene.getStylesheets().add(getClass().getResource("../view/LoginCSS.css").toString());
+        lobbyScene.getStylesheets().add(getClass().getResource("../view/WaitingCSS.css").toString());
+        gameScene.getStylesheets().add(getClass().getResource("../view/DrawCSS.css").toString());
+        // style setting code end
         
         window.setScene(loginScene);
         window.setTitle("Login");

@@ -113,7 +113,7 @@ public class WaitingRoomController {
 	@FXML
 	private void initialize() {
 //		System.out.println("initialize  " + getUser().getNickname());
-		RoomNameLabel.setText("방 이름");
+		RoomNameLabel.setText("Waiting Room");
 //		UserLabel1.setText(getUser().getNickname());
 		UserLabel1.setText("");
 		UserLabel2.setText("");

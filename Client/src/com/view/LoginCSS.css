@@ -1,0 +1,38 @@
+#textRelayDraw {
+	-fx-font-family: "Do Hyeon";
+	-fx-text-fill: #ffffff;
+	-fx-text-alignment: right;
+}
+
+#textLogin {
+	-fx-font-family: "Do Hyeon";
+	-fx-text-fill: #ffffff;
+}
+
+#textNickname{
+	-fx-font-family: "Do Hyeon";
+}
+
+#textNicknameAlert{
+	-fx-font-family: "Do Hyeon";
+}
+
+#startButton {
+	-fx-background-color: #000000;
+	-fx-text-fill: #ffffff;
+}
+
+#startButton:hover {
+	-fx-background-color: #333333;
+	-fx-text-fill: #ffffff;
+}
+
+#exitButton {
+	-fx-background-color: #000000;
+	-fx-text-fill: #ffffff;
+}
+
+#exitButton:hover {
+	-fx-background-color: #333333;
+	-fx-text-fill: #ffffff;
+}

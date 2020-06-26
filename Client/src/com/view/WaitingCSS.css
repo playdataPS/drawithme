@@ -1,0 +1,25 @@
+#textID{
+	-fx-font-family: "Do Hyeon";
+	-fx-font-size: 35;
+}
+
+#textButton{
+	-fx-font-family: "Do Hyeon";
+	-fx-font-size: 40;
+}
+
+#textChat{
+	-fx-font-family: "Do Hyeon";
+    -fx-font-size: 20;	
+    -fx-text-fill: #293241;
+}
+
+#textCnt{
+	-fx-font-family: "Do Hyeon";
+	-fx-font-size: 30;
+}
+
+#textLabel{
+	-fx-font-family: "Do Hyeon";
+	-fx-font-size: 35;
+}

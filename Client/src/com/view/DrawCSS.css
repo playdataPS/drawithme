@@ -1,0 +1,23 @@
+#textAnswer{
+	-fx-font-family: "Do Hyeon";
+    -fx-font-size: 28;	
+    -fx-text-fill: darkgray;
+}
+
+#textUser{
+	-fx-font-family: "Do Hyeon";
+    -fx-font-size: 15;	
+    -fx-text-fill: darkgray;
+}
+
+#textAll{
+	-fx-font-family: "Do Hyeon";
+    -fx-font-size: 20;	
+    -fx-text-fill: darkgray;
+}
+
+#textChat{
+	-fx-font-family: "Do Hyeon";
+    -fx-font-size: 15;	
+    -fx-text-fill: #293241;
+}

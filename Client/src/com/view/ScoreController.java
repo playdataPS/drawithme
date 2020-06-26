@@ -87,18 +87,38 @@ public class ScoreController {
    
       String text= score.replace("=",",");
       List<String> list = new ArrayList<String>();
-      
+      int cnt = 0;
       String[] splitStr = text.split(",");
-      for(int i=0; i<splitStr.length; i=i+2){
-         list.add(splitStr[i]);
-         System.out.println(splitStr);
-         if(i%2==0) {
-            nowPlayerList.get(i).setText(list.get(i));
-         }else {
-            scoreList.get(i).setText(list.get(i+1));
-         }      
-         nowPlayerList.get(0).setText(list.get(0));
-      }
+//      for(int i=0; i<splitStr.length; i++){
+////         list.add(splitStr[i]);
+////         System.out.println(splitStr);
+////        // if(i%2+1>=splitStr.length)	continue;
+////         nowPlayerList.get(cnt).setText(list.get(cnt));
+////         scoreList.get(cnt).setText(list.get(cnt+1));
+////         cnt+=2;
+//    	  
+//    	  for(int j=0;j<nowPlayerList.size();j++) {
+//            nowPlayerList.get(j).setText(list.get(i));
+//            scoreList.get(j).setText(list.get(i)); 
+//    	  }
+//       
+//      }
+      
+      for(int i=0; i<nowPlayerList.size(); i++){
+    	  for(int j=0;j<splitStr.length;j++) {
+    		  if(j%2==0) {
+    			  nowPlayerList.get(i).setText(list.get(j));
+    		  }else {
+    			  scoreList.get(i).setText(list.get(j)); 
+    		  }
+          
+    	  }//for end   
+     }//for end 
+      
+      
+     
+    	  
+    	  
 //      nowPlayerList.get(0).setText(list.get(0));
 //      scoreList.get(0).setText(list.get(1));
 //      nowPlayerList.get(1).setText(list.get(2));

@@ -8,20 +8,18 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
+
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.biz.UserBiz;
 import com.vo.Data;
-import com.vo.Game;
 import com.vo.GameStatus;
 import com.vo.Status;
 import com.vo.User;
@@ -189,14 +187,14 @@ public class Server {
 					Status state = data.getStatus();
 					String nowNickname = data.getNickname();
 					String ip = socket.getInetAddress().toString().substring(1, socket.getInetAddress().toString().length());
-//					String ip = "57010.0919.01" + tmpc; //test
+//					String ip = "168.1877.01" + tmpc; // test
 //					tmpc++;
 					System.out.println(state);
 					switch (state) {
 					case CONNECTED:
 						User user = new User(ip, nowNickname);
 						int checkIP = new UserBiz().ConfirmUserIP(ip);
-//						int checkIP = 0; //test
+//						int checkIP = 0; // test
 						List<String> playerList = new Vector<String>();
 						List<UserStatus> playerStatus = new ArrayList<UserStatus>();
 						if (checkIP > 0) {
@@ -208,19 +206,19 @@ public class Server {
 
 								if (clientList.size() != clientMap.size()) {
 									clientMap.put(this, data.getNickname());
-									if(data.getUserStatus()==null)	userStatusMap.put(data.getNickname(), UserStatus.WAITING);
-									//userStatusList.add(UserStatus.WAITING);// 초기 유저상태 설정
+									if (data.getUserStatus() == null)
+										userStatusMap.put(data.getNickname(), UserStatus.WAITING);
+									// userStatusList.add(UserStatus.WAITING);// 초기 유저상태 설정
 								}
 								for (Map.Entry<ClientHandler, String> enty : clientMap.entrySet()) {
 									System.out.println("client nickname : " + enty.getValue());
 									playerList.add(enty.getValue());
 								}
-								
-							
+
 								for (Map.Entry<String, UserStatus> enty : userStatusMap.entrySet()) {
 									System.out.println("client Status : " + enty.getValue());
 									playerStatus.add(enty.getValue());
-								}								
+								}
 								data.setUserStatusList(playerStatus);
 								data.setGameUserList(playerList);
 								broadCasting();
@@ -243,8 +241,9 @@ public class Server {
 
 								if (clientList.size() != clientMap.size()) {
 									clientMap.put(this, data.getNickname());
-									if(data.getUserStatus()==null)	userStatusMap.put(data.getNickname(), UserStatus.WAITING);
-									//userStatusList.add(UserStatus.WAITING);// 초기 유저상태 설정
+									if (data.getUserStatus() == null)
+										userStatusMap.put(data.getNickname(), UserStatus.WAITING);
+									// userStatusList.add(UserStatus.WAITING);// 초기 유저상태 설정
 								}
 								for (Map.Entry<ClientHandler, String> enty : clientMap.entrySet()) {
 									System.out.println("client nickname : " + enty.getValue());
@@ -253,7 +252,7 @@ public class Server {
 								for (Map.Entry<String, UserStatus> enty : userStatusMap.entrySet()) {
 									System.out.println("client Status : " + enty.getValue());
 									playerStatus.add(enty.getValue());
-								}								
+								}
 								data.setUserStatusList(playerStatus);
 								data.setGameUserList(playerList);
 
@@ -262,22 +261,19 @@ public class Server {
 
 						}
 						break;
-					case LOBBY://로비 버튼 이벤트 발생 시 
-						int cnt = 0;
-						boolean flag = false;
+					case LOBBY:// 로비 버튼 이벤트 발생 시
 						int gameCount = 0;
-						UserStatus userStatus = null;
+						UserStatus userStatus = data.getUserStatus();
 						playerList = new Vector<String>();
 						playerStatus = new ArrayList<UserStatus>();
 						data.setStatus(Status.LOBBY);
 						String clickedUser = data.getNickname();
-						System.out.println("clickedUser : "+ clickedUser);
-						
-						if (userStatus == null)	userStatus = UserStatus.WAITING;
+						System.out.println("clickedUser : " + clickedUser);
+
 						for (Map.Entry<ClientHandler, String> enty : clientMap.entrySet()) {
 							playerList.add(enty.getValue());
 						}
-						
+
 						switch (userStatus) {
 						case WAITING:
 							for (Map.Entry<String, UserStatus> entry : userStatusMap.entrySet()) {
@@ -285,40 +281,40 @@ public class Server {
 									userStatusMap.put(clickedUser, UserStatus.WAITING);
 								}
 							}
-							
-							
+
 							break;
 						case READY:
 							for (Map.Entry<String, UserStatus> enty : userStatusMap.entrySet()) {
 								if (enty.getKey().equals(clickedUser)) {
 									userStatusMap.put(clickedUser, UserStatus.READY);
-								
+
 								}
 								if (enty.getValue().equals(UserStatus.READY)) {
 									gameCount++;
 								}
+								System.out.println(enty.getValue());
 
 								playerStatus.add(enty.getValue());
-							
-							}
+
+							} //
 
 							break;
 						}// userStatus switch end
-						System.out.println("gameCount "+gameCount);
+						System.out.println("gameCount " + gameCount);
 						if (clientList.size() > 1 && gameCount == clientList.size()) {
 							// 게임 시작
 							gameSession = new GameSession(playerList);
 							gameSession.createGameQue();
 							data.setStatus(Status.PLAYING); // 모두 플레잉
 
-						} 
+						}
 						userStatusList.clear();
 						userStatusList.addAll(userStatusMap.values());
 						data.setUserStatusList(userStatusList);
 						data.setGameUserList(playerList);
 						broadCasting();
 
-						break;
+						break; // LOBBY
 
 					case PLAYING:
 
@@ -410,9 +406,12 @@ public class Server {
 						String score = "";
 						int i = 1;
 						for (Iterator<Map.Entry<String, Integer>> iter = list.iterator(); iter.hasNext();) {
+							
 							Map.Entry<String, Integer> entry = iter.next();
 							// sortedMap.put(entry.getKey(), entry.getValue());
+							System.out.println(entry.getKey());
 							score += entry.getKey() + "=" + entry.getValue();// kim=90,park=85
+							
 							if (gameSession.getScoreMap().size() != i) {
 								score += ",";
 							}

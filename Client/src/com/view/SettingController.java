@@ -1,6 +1,5 @@
 package com.view;
 
-import com.main.MainApp;
 import com.vo.Room;
 import com.vo.User;
 

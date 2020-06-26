@@ -1,8 +1,6 @@
 
 package com.view;
 
-import com.client.ClientListener;
-import com.main.MainApp;
 import com.vo.User;
 
 import javafx.application.Platform;
@@ -79,7 +77,7 @@ public class LoginController {
 		} else {
 			User user = new User(nickname);
 			playerName = nickname;
-			ClientListener.getInstance().createConnect("127.0.0.1", 5555, nickname, MainApp.getInstance());
+			ClientListener.getInstance().createConnect("192.168.0.249", 5555, nickname, MainApp.getInstance());
 			ClientListener.getInstance().startHandler();
 			// 건동코드 시작
 			// 코드삭제

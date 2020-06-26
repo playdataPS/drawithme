@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import com.main.MainApp;
 import com.vo.Data;
 import com.vo.Room;
+import com.vo.Status;
 import com.vo.User;
 
 import javafx.application.Platform;
@@ -76,6 +76,12 @@ public class ScoreController {
       return instance;
    }
    
+   
+   @FXML
+   public void exitbtn() {
+	   Data data = new Data();
+	   data.setStatus(Status.DISCONNECTION);
+   }
    
 
    

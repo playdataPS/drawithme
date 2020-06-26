@@ -1,10 +1,9 @@
-package com.biz;
+package com.server;
 
 import static common.JDBCTemplate.*;
 
 import java.sql.Connection;
 
-import com.dao.UserDao;
 import com.vo.User;
 
 public class UserBiz {

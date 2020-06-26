@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.client.ClientListener;
-import com.main.MainApp;
 import com.vo.Data;
 import com.vo.GameStatus;
 import com.vo.Room;

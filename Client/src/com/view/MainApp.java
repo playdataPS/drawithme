@@ -1,16 +1,8 @@
-package com.main;
+package com.view;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.client.ClientListener;
-import com.view.AnswerController;
-import com.view.DrawController;
-import com.view.LoginController;
-import com.view.ScoreController;
-import com.view.SettingController;
-import com.view.SideColorPickerController;
-import com.view.WaitingRoomController;
 import com.vo.Data;
 import com.vo.Game;
 import com.vo.Room;
@@ -70,18 +62,18 @@ public class MainApp extends Application {
 //		initDraw();
 //		initScore();
 		
-	   Parent loginRoot = FXMLLoader.load(getClass().getResource("../view/Login.fxml"));
+	   Parent loginRoot = FXMLLoader.load(getClass().getResource("Login.fxml"));
 	        loginScene = new Scene(loginRoot);
 	        
-		Parent lobbyRoot = FXMLLoader.load(getClass().getResource("../view/WaitingRoom.fxml"));
+		Parent lobbyRoot = FXMLLoader.load(getClass().getResource("WaitingRoom.fxml"));
         lobbyScene = new Scene(lobbyRoot);
         
-        Parent scoreRoot = FXMLLoader.load(getClass().getResource("../view/Score.fxml"));
+        Parent scoreRoot = FXMLLoader.load(getClass().getResource("Score.fxml"));
         scoreScene = new Scene(scoreRoot);
         
-        sideColorPickerRoot = (AnchorPane) FXMLLoader.load(getClass().getResource("../view/SideColorPicker.fxml"));
-        sideAnswerRoot = FXMLLoader.load(getClass().getResource("../view/SideAnswer.fxml"));
-        gameRoot = (AnchorPane) FXMLLoader.load(getClass().getResource("../view/Draw.fxml"));
+        sideColorPickerRoot = (AnchorPane) FXMLLoader.load(getClass().getResource("SideColorPicker.fxml"));
+        sideAnswerRoot = FXMLLoader.load(getClass().getResource("SideAnswer.fxml"));
+        gameRoot = (AnchorPane) FXMLLoader.load(getClass().getResource("Draw.fxml"));
       //  ((AnchorPane) gameRoot).getRightAnchor(sideAnswerRoot);
         
        AnchorPane.setBottomAnchor(sideColorPickerRoot, 246.0);
@@ -94,9 +86,9 @@ public class MainApp extends Application {
         
         // style setting code start
         Font.loadFont(getClass().getResourceAsStream("DoHyeon-Regular.ttf"), 20);
-        loginScene.getStylesheets().add(getClass().getResource("../view/LoginCSS.css").toString());
-        lobbyScene.getStylesheets().add(getClass().getResource("../view/WaitingCSS.css").toString());
-        gameScene.getStylesheets().add(getClass().getResource("../view/DrawCSS.css").toString());
+        loginScene.getStylesheets().add(getClass().getResource("LoginCSS.css").toString());
+        lobbyScene.getStylesheets().add(getClass().getResource("WaitingCSS.css").toString());
+        gameScene.getStylesheets().add(getClass().getResource("DrawCSS.css").toString());
         // style setting code end
         
         window.setScene(loginScene);
@@ -203,7 +195,7 @@ public class MainApp extends Application {
 	public void initLogin() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("../view/Login.fxml"));
+			loader.setLocation(MainApp.class.getResource("Login.fxml"));
 			AnchorPane root = (AnchorPane) loader.load();
 
 			primaryStage.setTitle("Login");
@@ -229,7 +221,7 @@ public class MainApp extends Application {
 
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("../view/WaitingRoom.fxml"));
+			loader.setLocation(MainApp.class.getResource("WaitingRoom.fxml"));
 			AnchorPane root;
 			root = (AnchorPane) loader.load();
 			Stage waitingRoomStage = new Stage();
@@ -259,7 +251,7 @@ public class MainApp extends Application {
 	public void initAnswer() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("../view/Answer.fxml"));
+			loader.setLocation(MainApp.class.getResource("Answer.fxml"));
 			AnchorPane root = (AnchorPane) loader.load();
 
 			Scene scene = new Scene(root);
@@ -278,7 +270,7 @@ public class MainApp extends Application {
 	public void initDraw() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("../view/Draw.fxml"));
+			loader.setLocation(MainApp.class.getResource("Draw.fxml"));
 			AnchorPane root = (AnchorPane) loader.load();
 
 			Scene scene = new Scene(root);
@@ -298,7 +290,7 @@ public class MainApp extends Application {
 	public void initRoomList(User user) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("../view/RoomList.fxml"));
+			loader.setLocation(MainApp.class.getResource("RoomList.fxml"));
 			BorderPane root = (BorderPane) loader.load();
 			Stage roomListStage = new Stage();
 			roomListStage.setTitle("Room List");
@@ -329,7 +321,7 @@ public class MainApp extends Application {
 	public void initSetting(User user) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("../view/Setting.fxml"));
+			loader.setLocation(MainApp.class.getResource("Setting.fxml"));
 			AnchorPane root = (AnchorPane) loader.load();
 
 			Stage settingStage = new Stage();
@@ -355,7 +347,7 @@ public class MainApp extends Application {
 	public void initScore() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("../view/Score.fxml"));
+			loader.setLocation(MainApp.class.getResource("Score.fxml"));
 			AnchorPane root = (AnchorPane) loader.load();
 
 			Scene scene = new Scene(root);

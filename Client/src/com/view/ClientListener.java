@@ -1,4 +1,4 @@
-package com.client;
+package com.view;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,13 +11,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.xml.ws.soap.AddressingFeature.Responses;
 
-import com.main.MainApp;
-import com.view.DrawController;
-import com.view.LoginController;
-import com.view.ScoreController;
-import com.view.SideAnswerController;
-import com.view.SideColorPickerController;
-import com.view.WaitingRoomController;
 import com.vo.Data;
 import com.vo.Game;
 import com.vo.GameStatus;
@@ -200,7 +193,7 @@ public class ClientListener implements Runnable {
 //						DrawController.getInstance().timer(false);
 						Data requestData = new Data();
 						requestData.setStatus(Status.RANKING);
-						 sendData(requestData);
+						 //sendData(requestData);
 					} else {
 						System.out.println(response.getScore());
 						ScoreController.getInstance().getRanking(response.getScore());

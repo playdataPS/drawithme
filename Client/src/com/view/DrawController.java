@@ -7,8 +7,6 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
-import com.client.ClientListener;
-import com.main.MainApp;
 import com.vo.Data;
 import com.vo.Game;
 import com.vo.GameStatus;

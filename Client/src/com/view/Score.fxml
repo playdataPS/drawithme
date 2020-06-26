@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.view.ScoreController">
 	<children>
-      <Button fx:id="out" layoutX="1022.0" layoutY="728.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="130.0" text="나가기" />
+      <Button fx:id="out" layoutX="1022.0" layoutY="728.0" onAction="#exitbtn" mnemonicParsing="false" prefHeight="54.0" prefWidth="130.0" text="나가기" />
       <Label alignment="CENTER" layoutX="455.0" layoutY="183.0" prefHeight="31.0" prefWidth="201.0" style="-fx-border-color: black;" text="접속자" />
       <Label fx:id="user1" alignment="CENTER" layoutX="455.0" layoutY="213.0" prefHeight="31.0" prefWidth="201.0" style="-fx-border-color: black;" />
       <Label fx:id="user2" alignment="CENTER" layoutX="455.0" layoutY="243.0" prefHeight="31.0" prefWidth="201.0" style="-fx-border-color: black;" />

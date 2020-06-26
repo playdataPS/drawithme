@@ -3,8 +3,6 @@ package com.view;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.main.MainApp;
-
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

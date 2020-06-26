@@ -18,7 +18,6 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.biz.UserBiz;
 import com.vo.Data;
 import com.vo.GameStatus;
 import com.vo.Status;
@@ -187,8 +186,8 @@ public class Server {
 					Status state = data.getStatus();
 					String nowNickname = data.getNickname();
 					String ip = socket.getInetAddress().toString().substring(1, socket.getInetAddress().toString().length());
-//					String ip = "168.1877.01" + tmpc; // test
-//					tmpc++;
+//					String ip = "771.0919.00" + tmpc; // test
+					tmpc++;
 					System.out.println(state);
 					switch (state) {
 					case CONNECTED:
@@ -257,9 +256,13 @@ public class Server {
 								data.setGameUserList(playerList);
 
 								broadCasting();
-							}
+							}else{
+								
+								System.out.println("회원가입 실패!");
+								
+							}//if ~ else end 
 
-						}
+						}//if~else end 
 						break;
 					case LOBBY:// 로비 버튼 이벤트 발생 시
 						int gameCount = 0;
@@ -428,7 +431,8 @@ public class Server {
 					case DISCONNECTION:
 						System.out.println("DISCONNECTED");
 						clientList.remove(ClientHandler.this);
-						broadCasting();
+						clientMap.remove(ClientHandler.this);
+						//broadCasting();
 
 						try {
 							stopServer();

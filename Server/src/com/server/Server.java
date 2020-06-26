@@ -188,15 +188,15 @@ public class Server {
 					data = (Data) ois.readObject();
 					Status state = data.getStatus();
 					String nowNickname = data.getNickname();
-//					String ip = socket.getInetAddress().toString().substring(1, socket.getInetAddress().toString().length());
-					String ip = "57010.0919.01" + tmpc;
-					tmpc++;
+					String ip = socket.getInetAddress().toString().substring(1, socket.getInetAddress().toString().length());
+//					String ip = "57010.0919.01" + tmpc; //test
+//					tmpc++;
 					System.out.println(state);
 					switch (state) {
 					case CONNECTED:
 						User user = new User(ip, nowNickname);
-//						int checkIP = new UserBiz().ConfirmUserIP(ip);
-						int checkIP = 0;
+						int checkIP = new UserBiz().ConfirmUserIP(ip);
+//						int checkIP = 0; //test
 						List<String> playerList = new Vector<String>();
 						List<UserStatus> playerStatus = new ArrayList<UserStatus>();
 						if (checkIP > 0) {

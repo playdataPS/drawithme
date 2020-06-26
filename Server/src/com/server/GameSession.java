@@ -2,8 +2,10 @@ package com.server;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Vector;
 
@@ -18,6 +20,14 @@ public class GameSession {
 	private Queue<String> drawerQue;
 	private List<String> nowPlayerList;
 	private Game nowTurn;
+	private Map<String, Integer> scoreMap;
+	
+	public Map<String, Integer> getScoreMap() {
+		return scoreMap;
+	}
+	public void setScoreMap(Map<String, Integer> scoreMap) {
+		this.scoreMap = scoreMap;
+	}
 	
 	public Game getNowTurn() {
 		return nowTurn;
@@ -60,6 +70,7 @@ public class GameSession {
 		List<String> mixedPlayerList = new Vector<String>();
 		List<String> dict = new ArrayList<String>();
 		this.gameQue = new LinkedList<Game>();
+		scoreMap = new HashMap<String, Integer>();
 		
 		dict.add("연장전");
 		dict.add("죽부인");
@@ -86,6 +97,7 @@ public class GameSession {
 			gameData.mixDrowingUser(drawerList);
 
 			gameQue.add(gameData);
+			scoreMap.put(gameData.getChallenger(), 0);
 			System.out.println("[ challenger + " + gameData.getChallenger()+" ]");
 		}
 	}// createGameQue() end

@@ -1,6 +1,7 @@
 package com.view;
 
 import java.net.URL;
+import java.nio.Buffer;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -95,7 +96,9 @@ public class WaitingRoomController {
 	private Room room;
 
 	private User user;
-
+	private final String CARD_STYLE = "-fx-background-radius: 5px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);";
+	private final String CARD_BLUE = "-fx-background-color : #42A5F5; -fx-background-radius: 5px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);";
+	private final String CARD_RED = "-fx-background-color : #EF5350; -fx-background-radius: 5px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);";
 	private String state = "R";
 	@FXML
 	private List<Label> labelList;
@@ -169,7 +172,7 @@ public class WaitingRoomController {
 	}
 
 	public void setLastMessage(String nickname) {
-		//사용자가 나갔을때, remove 되어서 그 사용자의 정보를 알기가 어렵넹
+		// 사용자가 나갔을때, remove 되어서 그 사용자의 정보를 알기가 어렵넹
 	}
 
 	@FXML
@@ -226,16 +229,26 @@ public class WaitingRoomController {
 
 	}
 
-	public void changeLabel(List<User> users) {// 수정 해야함 - 건동
+	public void changeLabel(Data userStatusData) {
 		// 유저가 입장하면 카드가 변화됨
 		Platform.runLater(() -> {
 //			RoomNameLabel.setText(user.getNickname());
+			List<UserStatus> userStatusList  = userStatusData.getUserStatusList();
+			List<String> users = userStatusData.getGameUserList();
 			CurrUserCount.setText(String.valueOf(users.size()));
 			for (int i = 0; i < users.size(); i++) {
-				String nickname = users.get(i).getNickname();
+				String nickname = users.get(i);
 				System.out.println("nickname  :  " + nickname);
-				userPaneList.get(i).setStyle(
-						"-fx-background-color : #42A5F5; -fx-background-radius: 5px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);");
+				if(userStatusList.get(i).equals(UserStatus.WAITING)) {
+					readyStart.setText("준비");
+					readyStart.setStyle(CARD_RED);
+					userPaneList.get(i).setStyle(CARD_BLUE);
+				}else {
+					readyStart.setText("취소");
+					readyStart.setStyle(CARD_BLUE);
+					userPaneList.get(i).setStyle(CARD_RED);
+				}
+				
 				labelList.get(i).setText(nickname);
 			} // for end
 
@@ -243,31 +256,33 @@ public class WaitingRoomController {
 
 	}
 
-	public void ChangeReadyColor(List<User> users) {// 수정 해야함 - 건동
+	public void changeReadyColor(Data userStatusData) {
+		//List<UserStatus> userStatusList, List<String> users
+		
 		// ready 버튼 클릭 후 카드 변화
 		// 사용자가 몇번째 pane에 들어가는지 알아야 background 바꿀 수 있음.
 		Platform.runLater(() -> {
+			List<UserStatus> userStatusList  = userStatusData.getUserStatusList();
+			List<String> users = userStatusData.getGameUserList();
 			int idx = 0;
+			StringBuffer sb = new StringBuffer();
 
-			StringBuffer style = new StringBuffer();
-
-			style.append(
-					"-fx-background-radius: 5px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);");
-//			RoomNameLabel.setText(user.getNickname());
-			CurrUserCount.setText(String.valueOf(users.size()));
-			String red = style.append(" -fx-background-color : #EF5350;").toString();
-			String blue = style.append(" -fx-background-color : #42A5F5;").toString();
-			for (User u : users) { // users들
-
-				// String nickname = users.get(idx).getNickname();
-//				if(u.getRoomStatus()==null) u.setRoomStatus(UserStatus.WAITING); //room 상태가 null이면 wating
-//				if (u.getRoomStatus().equals(UserStatus.WAITING)&&u.getNickname().equals(labelList.get(idx).getText())) {
-//					userPaneList.get(idx).setStyle(blue);
-//				} else{
-//					userPaneList.get(idx).setStyle(red);
-//					
-//				}
-				// labelList.get(idx).setText(nickname);
+			for (String uName : users) { // users들
+				if(idx>=userStatusList.size())	continue;
+				UserStatus userstatus = userStatusList.get(idx);
+				System.out.println(" user "+uName+" : "+userstatus);
+				//if (userstatus == null)	userstatus = UserStatus.WAITING; // room 상태가 null이면 wating
+				if (userstatus.equals(UserStatus.WAITING) && uName.equals(labelList.get(idx).getText())) {
+					userPaneList.get(idx).setStyle(CARD_BLUE);
+					readyStart.setText("준비");
+					readyStart.setStyle(CARD_RED);
+				} else if(userstatus.equals(UserStatus.READY) && uName.equals(labelList.get(idx).getText())){
+					readyStart.setText("취소");
+					readyStart.setStyle(CARD_BLUE);
+					userPaneList.get(idx).setStyle(CARD_RED);
+				
+				}
+//				labelList.get(idx).setText(uName);
 				idx++;
 			}
 
@@ -287,51 +302,36 @@ public class WaitingRoomController {
 	}
 
 	@FXML
-	public void handleBtnStart(ActionEvent event) {// 수정 해야함 - 건동
+	public void handleBtnStart(ActionEvent event) {
 		// 준비 버튼 클릭 이벤트
-		User userData = new User();// ClientListener.getInstance().getUser()
-//			User oldUserData = ClientListener.getInstance().getUser();
-
-		/// System.out.println("oldUserData before : "+user.getNickname());
-		StringBuffer style = new StringBuffer();
-
-		style.append(
-				"-fx-background-radius: 5px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);");
-		String red = style.append(" -fx-background-color : #EF5350;").toString();
-		String blue = style.append(" -fx-background-color : #42A5F5;").toString();
 		String nickname = LoginController.getInstance().getPlayerName();
-//			UserStatus status = null;
-//			for(User u : user.getUserList()) {
-//				if(u.getNickname().equals(nickname)) {
-//					status = u.getRoomStatus();
-//				}
-//			}
-//			
-//			switch (status) {
-//			case WAITING:
-//				
-//				readyStart.setStyle(blue);
-//				userData.setRoomStatus(UserStatus.READY);
-//				break;
-//
-//			case READY:
-//				readyStart.setStyle(red);
-//				userData.setRoomStatus(UserStatus.WAITING);
-//				break;
-//			}
-//			///System.out.println("oldUserData after : "+user.getRoomStatus());
-//			
-//			userData.setStatus(Status.CONNECTED);
-//			//ClientListener.setUser(user);
-//			userData.setNickname(nickname);
-//			System.out.println("oldUserData nick1 : "+nickname);
-			
-			Data sendData = new Data();
-			sendData.setStatus(Status.READY);
-			ClientListener.getInstance().sendData(sendData);
-//			 
+		Data sendData = new Data();
+		Status nowStatus = null;
 		
+		for(int i=0; i<labelList.size(); i++) {
+			if (labelList.get(i).getText().equals(nickname)) {//클릭한 유저의 현재 상태를 확인 
+				System.out.println(nickname+" CLICK! nowStatus "+userPaneList.get(i).getStyle());
+				nowStatus = userPaneList.get(i).getStyle().equals(CARD_RED)? Status.READY: Status.WAITING;				
+			}
+		}
 
-	}
+		
+		switch (nowStatus) { //바꿔서 보내기 
+		case WAITING:
+			sendData.setUserStatus(UserStatus.READY);
+//			sendData.setStatus(Status.READY);
+			break;
+
+		case READY:
+			sendData.setUserStatus(UserStatus.WAITING);
+//			sendData.setStatus(Status.WAITING);
+			break;
+		default:
+			break;
+		}
+		sendData.setStatus(Status.LOBBY);
+		sendData.setNickname(nickname);
+		ClientListener.getInstance().sendData(sendData);
+	}//handleBtnStart() end 
 
 }

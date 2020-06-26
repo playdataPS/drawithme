@@ -205,7 +205,7 @@ public class DrawController implements Initializable {
 
 		if (LoginController.getInstance().getPlayerName().equals(drawer)) {
 
-			System.out.println("Draw click!");
+//			System.out.println("Draw click!");
 //        Game game = new Game(oldX, oldY, lastX, lastY);
 			Data requestData = new Data();
 			requestData.setLastX(e.getX());

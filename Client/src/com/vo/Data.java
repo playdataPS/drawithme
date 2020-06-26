@@ -21,6 +21,7 @@ public class Data implements Serializable {
 	private  String challenger;
 	private  String drawer;
 	private  List<String> gameUserList;
+	private	 List<UserStatus> userStatusList;
 	private  double startX;
 	private  double startY;
 	private  double oldX;
@@ -79,6 +80,12 @@ public class Data implements Serializable {
 		this.lastY = game.getLastY();
 	}
 	
+	public List<UserStatus> getUserStatusList() {
+		return userStatusList;
+	}
+	public void setUserStatusList(List<UserStatus> userStatusList) {
+		this.userStatusList = userStatusList;
+	}
 	public String getAnswer() {
 		return answer;
 	}

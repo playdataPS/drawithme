@@ -1,5 +1,5 @@
 -- SYS 접속
-CONNECT SYS/admin1234;
+connect sys/oracle as sysdba;
 -- 계정 생성
 CREATE USER MPJ_CURD IDENTIFIED BY admin1234;
 -- 계정 권한 설정

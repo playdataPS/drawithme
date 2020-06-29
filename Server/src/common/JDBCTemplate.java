@@ -16,7 +16,7 @@ public class JDBCTemplate {
 		}
 
 //		String url = "jdbc:oracle:thin:@localhost:1521:XE";
-		String url = "jdbc:oracle:thin:@localhost:1521:XE";
+		String url = "jdbc:oracle:thin:@192.168.0.249:1521:XE";
 
 		String id = "MPJ_CURD";
     

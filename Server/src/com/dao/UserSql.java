@@ -1,4 +1,4 @@
-package com.server;
+package com.dao;
 
 public interface UserSql {
 	

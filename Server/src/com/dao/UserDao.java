@@ -1,10 +1,10 @@
-package com.server;
+package com.dao;
+
+import static common.JDBCTemplate.*;
 
 import java.sql.*;
 
 import com.vo.User;
-
-import static common.JDBCTemplate.*;
 
 public class UserDao implements UserSql {
    private Connection conn;

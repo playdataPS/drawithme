@@ -5,7 +5,7 @@ public class MainServer {
 	public static void main(String[] args) {
 
 		int port = 5555;
-		Server.Start(port);
+		Server.startServer(port);
 		
 	}
 }

@@ -18,6 +18,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.biz.UserBiz;
 import com.vo.Data;
 import com.vo.GameStatus;
 import com.vo.Status;
@@ -49,7 +50,7 @@ public class Server {
 
 	}
 
-	public static void Start(int port) {
+	public static void startServer(int port) {
 //		if(clientList.size()==8) serverStarted = true; // 방에 8명 있으면 서버 시작 안함 
 
 //		if (serverStarted) {
